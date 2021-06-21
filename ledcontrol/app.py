@@ -7,6 +7,7 @@ from recordclass import recordclass
 from threading import Timer
 from pathlib import Path
 from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS
 from ledcontrol.animationcontroller import AnimationController
 from ledcontrol.ledcontroller import LEDController
 
@@ -31,6 +32,9 @@ def create_app(led_count, refresh_rate,
                save_interval,
                allow_direct_control):
     app = Flask(__name__)
+
+    cors = CORS(app, resources={r"*": {"origins": "*"}})
+
     leds = LEDController(led_count, led_pin,
                          led_data_rate, led_dma_channel,
                          led_pixel_order)
