@@ -23,6 +23,7 @@ class PreInstallCommand(install):
 requirements = [
     'recordclass>=0.12.0.1',
     'Flask>=1.0.2',
+    'Flask-Cors>=3.0.10',
     'RestrictedPython>=4.0',
     'ujson>=3.1.0',
 ]
