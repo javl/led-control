@@ -106,6 +106,15 @@ def create_app(led_count, refresh_rate,
         return render_template('index.html',
                                form=form)
 
+    @app.route('/control')
+    def get_control():
+        'Returns a simpler HTML controller page'
+        for item in form:
+            if (item.key in controller.params):
+                item.val = item.type(controller.params[item.key])
+        return render_template('simple-control.html',
+                               form=form)
+
     @app.route('/setparam')
     def set_param():
         'Sets a key/value pair in controller parameters'
