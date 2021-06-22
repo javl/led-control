@@ -40,16 +40,23 @@
       width: 40%;
       display: inline-block;
     }
+
+    .shutdown-btn {
+      width: auto;
+      margin-top: 3rem;
+    }
+
   </style>
 </head>
 <body>
-  <button onclick="setBrightness(0)"><i class="fas fa-power-off"></i> Off</button><br><br>
+  <button onclick="setBrightness(0)"><i class="far fa-lightbulb"></i> LEDs Off</button><br><br>
   <div class="button-container">
     <button onclick="setStrobe()"><i class="fas fa-bahai"></i> Strobe</button>
     <button onclick="setJellyfish()"><i class="fa-solid fa-spaghetti-monster-flying"></i> Jellyfish</button>
   </div>
   <div id="color-picker"></div>
   <button id="color-preview" onclick="sendColor()"><i class="fas fa-adjust"></i> Set solid color</button>
+  <button class="shutdown-btn" onclick="shutdown()"><i class="fas fa-power-off"></i> Shutdown Pi</button>
 
   <script src="static/js/iro.min.js"></script>
 
@@ -85,6 +92,11 @@
     setPalette(1624275666283);
     setBrightness(0.6);
     setSpeed(0.2);
+
+    function shutdown() {
+    if (confirm('Are you sure you want to shutdown the Pi?')) {
+      fetch(`${endpoint}/shutdown`);
+    }
   }
 
   function sendColor() {
