@@ -150,7 +150,7 @@
   function update() {
     if (confirm('Do you want to check for new code and reboot?')) {
       document.querySelector('.update-msg').style.display = 'block';
-      document.querySelector('maintenance-buttons').style.display = 'none';
+      document.querySelector('.maintenance-buttons').style.display = 'none';
       document.querySelector('#color-picker').style.display = 'none';
       fetch(`${endpoint}/update`)
       .then(() => {
