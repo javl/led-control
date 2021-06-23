@@ -41,7 +41,7 @@
       display: inline-block;
     }
 
-    .shutdown-btn {
+    .maintenance-btn {
       width: auto;
       margin-top: 3rem;
     }
@@ -55,8 +55,9 @@
     <button onclick="setJellyfish()"><i class="fa-solid fa-spaghetti-monster-flying"></i> Jellyfish</button>
   </div>
   <div id="color-picker"></div>
-  <button id="color-preview" onclick="sendColor()"><i class="fas fa-adjust"></i> Set solid color</button>
-  <button class="shutdown-btn" onclick="shutdown()"><i class="fas fa-power-off"></i> Shutdown Pi</button>
+  <button id="color-preview" onclick="sendColor()"><i class="fas fa-adjust"></i> Set Glowing Color</button>
+  <button class="maintenance-btn" onclick="shutdown()"><i class="fas fa-power-off"></i> Shutdown Pi</button>
+  <button class="maintenance-btn" onclick="update()"><i class="fas fa-sync"></i> Update Code</button>
 
   <script src="static/js/iro.min.js"></script>
 
@@ -92,10 +93,17 @@
     setPalette(1624275666283);
     setBrightness(0.6);
     setSpeed(0.2);
+  }
 
-    function shutdown() {
+  function shutdown() {
     if (confirm('Are you sure you want to shutdown the Pi?')) {
       fetch(`${endpoint}/shutdown`);
+    }
+  }
+
+  function update() {
+    if (confirm('Do you want to check for new code and reboot?')) {
+      fetch(`${endpoint}/update`);
     }
   }
 

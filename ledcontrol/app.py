@@ -16,6 +16,8 @@ import ledcontrol.animationpatterns as animpatterns
 import ledcontrol.colorpalettes as colorpalettes
 import ledcontrol.utils as utils
 
+import os
+
 # Record class for form items
 FormItem = recordclass('FormItem', [
     'control', 'key', 'type', 'min', 'max', 'step', 'options', 'val',
@@ -118,6 +120,18 @@ def create_app(led_count, refresh_rate,
                 item.val = item.type(controller.params[item.key])
         return render_template('simple-control.html',
                                form=form)
+
+    @app.route('/shutdown')
+    def get_shutdown():
+        'Shutdown the RPi'
+        os.system('sudo shutdown -h now')
+        return ""
+
+    @app.route('/update')
+    def get_update():
+        'Pull the latest code from git'
+        os.system('git -C /home/pi/led-control pull origin artur && sudo reboot')
+        return ""
 
     @app.route('/setparam')
     def set_param():
