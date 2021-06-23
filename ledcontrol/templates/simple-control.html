@@ -116,6 +116,10 @@
         document.querySelector('.connected-msg').innerHTML = 'disconnected';
       }
     })
+    .catch((error) => {
+      connected = false;
+      document.querySelector('.connected-msg').innerHTML = 'disconnected';
+    });
   }
   setInterval(() => {
     checkIfOnline();
@@ -167,6 +171,9 @@
         clearInterval(checkServerInterval);
         window.location.reload(true);
       }
+    })
+    .catch((error) => {
+      //
     });
   }
   function update() {
