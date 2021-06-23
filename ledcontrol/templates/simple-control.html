@@ -15,6 +15,7 @@
      margin: 0.3rem;
      text-align: center;
      background-color: black;
+     font-family: Verdana, Geneva, Tahoma, sans-serif;
     }
 
     button {
@@ -49,9 +50,33 @@
       width: auto;
     }
 
+    .reload-msg {
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      color: white;
+      position: absolute;
+      left: 0;
+      top: 0;
+      display: none;
+      text-align: center;
+      font-size: 2rem;
+      padding-top: 2rem;
+    }
+
+    .countdown {
+      margin-top: 3rem;
+    }
+
   </style>
 </head>
 <body>
+  <div class="update-msg">
+    <div class="msg">
+      Looking for updates and rebooting
+    </div>
+    <div class="countdown">30</div>
+  </div>
   <button onclick="setBrightness(0)"><i class="far fa-lightbulb"></i> LEDs Off</button><br><br>
   <div class="button-container">
     <button onclick="setStrobe()"><i class="fas fa-bahai"></i> Strobe</button>
@@ -108,8 +133,18 @@
 
   function update() {
     if (confirm('Do you want to check for new code and reboot?')) {
-      alert('Wait for about a minute, then reload this page');
+      document.querySelector('.update-msg').style.display = 'block';
       fetch(`${endpoint}/update`);
+      let countdown = 31;
+      const countdownInterval = setInterval(() => {
+        countdown -= 1;
+        document.querySelector('.countdown').innerHTML = Math.max(0, countdown);
+        if (countdown <= 0) {
+          clearInterval(countdownInterval);
+          window.location.reload(true);
+        }
+      }, 1000)
+
     }
   }
 
