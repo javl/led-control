@@ -125,13 +125,13 @@ def create_app(led_count, refresh_rate,
     def get_shutdown():
         'Shutdown the RPi'
         os.system('sudo shutdown -h now')
-        return ""
+        return "Shutting down"
 
     @app.route('/update')
     def get_update():
         'Pull the latest code from git'
-        os.system('git -C /home/pi/led-control pull origin artur; sleep 2; sudo reboot')
-        return ""
+        os.system('sudo -u pi git -C /home/pi/led-control pull origin artur; sleep 2; sudo reboot')
+        return "Pulled code, rebooting"
 
     @app.route('/setparam')
     def set_param():
