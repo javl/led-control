@@ -159,6 +159,7 @@
 
   function shutdown() {
     if (confirm('Are you sure you want to shutdown the Pi?')) {
+      setBrightness(0.0);
       fetch(`${endpoint}/shutdown`);
     }
   }
