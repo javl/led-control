@@ -151,6 +151,7 @@
   }
 
   function setJellyfish(){
+    setPattern(1624277222886);
     setPalette(1624275666283);
     setBrightness(0.6);
     setSpeed(0.2);
@@ -171,9 +172,6 @@
         window.location.reload(true);
       }
     })
-    .catch((error) => {
-      //
-    });
   }
   function update() {
     if (confirm('Do you want to check for new code and reboot?')) {
@@ -189,39 +187,30 @@
   }
 
   function sendColor() {
-    const paletteId = 1624290237337;
+    setPattern(1624446887029);
+    const paletteId = 1624449450971;
     setPalette(paletteId);
-    fetch(`${endpoint}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SolidColor"}`)
+    fetch(`${endpoint}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SlowPulsePalette"}`)
     .then((response) => {
-      setPattern(1624446887029);
       setSpeed(0.2)
       setBrightness(0.8);
     })
-    // .then((data) => {});
   }
 
   function setPattern(value) {
     fetch(`${endpoint}/setparam?key=primary_pattern&value=${value}`)
-    // .then((response) => response.json())
-    // .then((data) => console.log(data));
   }
 
   function setPalette(value) {
     fetch(`${endpoint}/setparam?key=palette&value=${value}`)
-    // .then((response) => response.json())
-    // .then((data) => console.log(data));
   }
 
   function setBrightness(value) {
     fetch(`${endpoint}/setparam?key=brightness&value=${value}`)
-    // .then((response) => response.json())
-    // .then((data) => console.log(data));
   }
 
   function setSpeed(value) {
     fetch(`${endpoint}/setparam?key=primary_speed&value=${value}`)
-    // .then((response) => response.json())
-    // .then((data) => console.log(data));
   }
 
   </script>
