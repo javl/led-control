@@ -191,32 +191,31 @@
       setSpeed(1.0)
       setBrightness(0.1);
     })
-    .then((data) => {
-    });
+    // .then((data) => {});
   }
 
   function setPattern(value) {
     fetch(`${endpoint}/setparam?key=primary_pattern&value=${value}`)
-    .then((response) => response.json())
-    .then((data) => console.log(data));
+    // .then((response) => response.json())
+    // .then((data) => console.log(data));
   }
 
   function setPalette(value) {
     fetch(`${endpoint}/setparam?key=palette&value=${value}`)
-    .then((response) => response.json())
-    .then((data) => console.log(data));
+    // .then((response) => response.json())
+    // .then((data) => console.log(data));
   }
 
   function setBrightness(value) {
     fetch(`${endpoint}/setparam?key=brightness&value=${value}`)
-    .then((response) => response.json())
-    .then((data) => console.log(data));
+    // .then((response) => response.json())
+    // .then((data) => console.log(data));
   }
 
   function setSpeed(value) {
     fetch(`${endpoint}/setparam?key=primary_speed&value=${value}`)
-    .then((response) => response.json())
-    .then((data) => console.log(data));
+    // .then((response) => response.json())
+    // .then((data) => console.log(data));
   }
 
   </script>
