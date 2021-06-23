@@ -79,7 +79,7 @@
 <body>
   <div class="update-msg">
     <div class="msg">
-      Looking for updates and rebooting...
+      Looking for updates<br>and rebooting...
     </div>
   </div>
   <button onclick="setBrightness(0)"><i class="far fa-lightbulb"></i> LEDs Off</button><br><br>
@@ -136,29 +136,29 @@
     }
   }
 
+  const checkServerInterval = null;
   function checkIfServerOnline() {
+    console.log('check for server');
     fetch(`${endpoint}/`)
     .then((response) => {
       if (response.status === 200) {
+        clearInterval(checkServerInterval);
         window.location.reload(true);
       } else {
         alert('Something went wrong... Restart the RPi by disconnecting and reconnecting power');
       }
     });
   }
-
   function update() {
     if (confirm('Do you want to check for new code and reboot?')) {
       document.querySelector('.update-msg').style.display = 'block';
       document.querySelector('.maintenance-buttons').style.display = 'none';
       document.querySelector('#color-picker').style.display = 'none';
       fetch(`${endpoint}/update`)
-      .then(() => {
-        setInterval(() => {
-          checkIfServerOnline();
-        }, 5000);
+      checkServerInterval = setInterval(() => {
         checkIfServerOnline();
-      })
+      }, 5000);
+      checkIfServerOnline();
     }
   }
 
