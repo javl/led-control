@@ -104,21 +104,21 @@ def create_app(led_count, refresh_rate,
         item.label = utils.snake_to_title(item.key)
 
     @app.route('/')
-    def index():
-        'Returns web app page'
-        for item in form:
-            if (item.key in controller.params):
-                item.val = item.type(controller.params[item.key])
-        return render_template('index.html',
-                               form=form)
-
-    @app.route('/control')
     def get_control():
         'Returns a simpler HTML controller page'
         for item in form:
             if (item.key in controller.params):
                 item.val = item.type(controller.params[item.key])
         return render_template('simple-control.html',
+                               form=form)
+
+    @app.route('/setup')
+    def get_setup():
+        'Returns web app page'
+        for item in form:
+            if (item.key in controller.params):
+                item.val = item.type(controller.params[item.key])
+        return render_template('setup.html',
                                form=form)
 
     @app.route('/shutdown')
