@@ -64,10 +64,6 @@
       padding-top: 2rem;
     }
 
-    .countdown {
-      margin-top: 3rem;
-    }
-
   </style>
 </head>
 <body>
@@ -75,7 +71,6 @@
     <div class="msg">
       Looking for updates and rebooting
     </div>
-    <div class="countdown">30</div>
   </div>
   <button onclick="setBrightness(0)"><i class="far fa-lightbulb"></i> LEDs Off</button><br><br>
   <div class="button-container">
@@ -131,20 +126,27 @@
     }
   }
 
+  function checkIfServerOnline() {
+    fetch('http://192.168.1.100')
+    .then((response) => {
+      if (response.status === 200) {
+        window.location.reload(true);
+      } else {
+        alert('Something went wrong... Restart the RPi by disconnecting and reconnecting power');
+      }
+    })
+  }
+
   function update() {
     if (confirm('Do you want to check for new code and reboot?')) {
       document.querySelector('.update-msg').style.display = 'block';
-      fetch(`${endpoint}/update`);
-      let countdown = 31;
-      const countdownInterval = setInterval(() => {
-        countdown -= 1;
-        document.querySelector('.countdown').innerHTML = Math.max(0, countdown);
-        if (countdown <= 0) {
-          clearInterval(countdownInterval);
-          window.location.reload(true);
-        }
-      }, 1000)
-
+      fetch(`${endpoint}/update`)
+      .then(() => {
+        setInterval(() => {
+          checkIfServerOnline();
+        }, 5000);
+        checkIfServerOnline();
+      }
     }
   }
 
