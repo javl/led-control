@@ -136,7 +136,7 @@
     }
   }
 
-  const checkServerInterval = null;
+  let checkServerInterval = null;
   function checkIfServerOnline() {
     console.log('check for server');
     fetch(`${endpoint}/`)
