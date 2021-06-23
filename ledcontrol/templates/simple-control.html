@@ -74,6 +74,11 @@
       padding-top: 200px;
     }
 
+    .connected-msg {
+      margin-top: 1rem;
+      color: white;
+    }
+
   </style>
 </head>
 <body>
@@ -89,6 +94,7 @@
   </div>
   <div id="color-picker"></div>
   <button id="color-preview" onclick="sendColor()"><i class="fas fa-adjust"></i> Set Glow</button>
+  <div class="connected-msg">disconnected</div>
   <div class="maintenance-buttons">
     <button class="maintenance-btn" onclick="shutdown()"><i class="fas fa-power-off"></i> Shutdown Pi</button>
     <button class="maintenance-btn" onclick="update()"><i class="fas fa-cloud-download-alt"></i> Update Code</button>
@@ -98,6 +104,19 @@
 
   <script>
   const endpoint = 'http://192.168.1.100';
+  let connected = false;
+  setInterval(() => {
+    fetch(`${endpoint}/ping`)
+    .then((response) => {
+      if (response.status === 200) {
+        connected = true;
+        document.querySelector('.connected-msg').innerHTML = 'connected';
+      } else {
+        connected = false;
+        document.querySelector('.connected-msg').innerHTML = 'disconnected';
+      }
+    })
+  }, 5000);
 
   let hsl = {
     h: 0,
@@ -138,14 +157,11 @@
 
   let checkServerInterval = null;
   function checkIfServerOnline() {
-    console.log('check for server');
-    fetch(`${endpoint}/`)
+    fetch(`${endpoint}/ping`)
     .then((response) => {
       if (response.status === 200) {
         clearInterval(checkServerInterval);
         window.location.reload(true);
-      } else {
-        alert('Something went wrong... Restart the RPi by disconnecting and reconnecting power');
       }
     });
   }
