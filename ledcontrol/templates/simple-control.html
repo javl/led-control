@@ -105,7 +105,7 @@
   <script>
   const endpoint = 'http://192.168.1.100';
   let connected = false;
-  setInterval(() => {
+  function checkIfOnline() {
     fetch(`${endpoint}/ping`)
     .then((response) => {
       if (response.status === 200) {
@@ -116,7 +116,11 @@
         document.querySelector('.connected-msg').innerHTML = 'disconnected';
       }
     })
+  }
+  setInterval(() => {
+    checkIfOnline();
   }, 5000);
+  checkIfOnline
 
   let hsl = {
     h: 0,
@@ -156,7 +160,7 @@
   }
 
   let checkServerInterval = null;
-  function checkIfServerOnline() {
+  function checkIfServerBack() {
     fetch(`${endpoint}/ping`)
     .then((response) => {
       if (response.status === 200) {
@@ -172,9 +176,9 @@
       document.querySelector('#color-picker').style.display = 'none';
       fetch(`${endpoint}/update`)
       checkServerInterval = setInterval(() => {
-        checkIfServerOnline();
+        checkIfServerBack();
       }, 5000);
-      checkIfServerOnline();
+      checkIfServerBack();
     }
   }
 
