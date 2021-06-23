@@ -151,7 +151,6 @@
   }
 
   function setJellyfish(){
-    setPattern(1624277222886);
     setPalette(1624275666283);
     setBrightness(0.6);
     setSpeed(0.2);
@@ -194,9 +193,9 @@
     setPalette(paletteId);
     fetch(`${endpoint}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SolidColor"}`)
     .then((response) => {
-      setPattern(1);
-      setSpeed(1.0)
-      setBrightness(0.1);
+      setPattern(1624446887029);
+      setSpeed(0.2)
+      setBrightness(0.8);
     })
     // .then((data) => {});
   }
