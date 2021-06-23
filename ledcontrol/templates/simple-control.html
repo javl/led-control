@@ -45,13 +45,14 @@
       width: auto;
       margin-top: 3rem;
     }
+
   </style>
 </head>
 <body>
   <button onclick="setBrightness(0)"><i class="far fa-lightbulb"></i> LEDs Off</button><br><br>
   <div class="button-container">
-    <button onclick="setPattern(1624276202155);setBrightness(0.1);setSpeed(1.0)"><i class="fas fa-bahai"></i> Strobe</button>
-    <button onclick="setPattern(1624277222886); setPalette(1624275666283);setBrightness(0.1);setSpeed(0.4)"><i class="fa-solid fa-spaghetti-monster-flying"></i> Jellyfish</button>
+    <button onclick="setStrobe()"><i class="fas fa-bahai"></i> Strobe</button>
+    <button onclick="setJellyfish()"><i class="fa-solid fa-spaghetti-monster-flying"></i> Jellyfish</button>
   </div>
   <div id="color-picker"></div>
   <button id="color-preview" onclick="sendColor()"><i class="fas fa-adjust"></i> Set solid color</button>
@@ -80,7 +81,19 @@
 
   const endpoint = 'http://192.168.1.100/';
 
-  function shutdown() {
+  function setStrobe(){
+    setPattern(1624276202155);
+    setBrightness(0.8);
+    setSpeed(1.0);
+  }
+
+  function setJellyfish(){
+    setPattern(1624277222886);
+    setPalette(1624275666283);
+    setBrightness(0.6);
+    setSpeed(0.2);
+
+    function shutdown() {
     if (confirm('Are you sure you want to shutdown the Pi?')) {
       fetch(`${endpoint}/shutdown`);
     }
