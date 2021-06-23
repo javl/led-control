@@ -112,6 +112,11 @@ def create_app(led_count, refresh_rate,
         return render_template('simple-control.html',
                                form=form)
 
+    @app.route('/ping')
+    def get_ping():
+        'Simple check to see if server is online'
+        return "pong"
+
     @app.route('/setup')
     def get_setup():
         'Returns web app page'
