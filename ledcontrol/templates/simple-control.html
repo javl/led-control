@@ -41,9 +41,12 @@
       display: inline-block;
     }
 
+    .maintenance-buttons {
+      margin-top: 5rem;
+    }
+
     .maintenance-btn {
       width: auto;
-      margin-top: 3rem;
     }
 
   </style>
@@ -56,8 +59,10 @@
   </div>
   <div id="color-picker"></div>
   <button id="color-preview" onclick="sendColor()"><i class="fas fa-adjust"></i> Set Glow</button>
-  <button class="maintenance-btn" onclick="shutdown()"><i class="fas fa-power-off"></i> Shutdown Pi</button>
-  <button class="maintenance-btn" onclick="update()"><i class="fas fa-cloud-download-alt"></i> Update Code</button>
+  <div class="maintenance-buttons">
+    <button class="maintenance-btn" onclick="shutdown()"><i class="fas fa-power-off"></i> Shutdown Pi</button>
+    <button class="maintenance-btn" onclick="update()"><i class="fas fa-cloud-download-alt"></i> Update Code</button>
+  </div>
 
   <script src="static/js/iro.min.js"></script>
 
@@ -103,6 +108,7 @@
 
   function update() {
     if (confirm('Do you want to check for new code and reboot?')) {
+      alert('Wait for about a minute, then reload this page');
       fetch(`${endpoint}/update`);
     }
   }
