@@ -105,28 +105,34 @@
   <script src="static/js/iro.min.js"></script>
 
   <script>
-  const endpoint = 'http://192.168.1.202';
-  let connected = false;
-  function checkIfOnline() {
-    fetch(`${endpoint}/ping`)
-    .then((response) => {
-      if (response.status === 200) {
-        connected = true;
-        document.querySelector('.connected-msg').innerHTML = 'connected';
-      } else {
-        connected = false;
-        document.querySelector('.connected-msg').innerHTML = 'disconnected';
-      }
-    })
-    .catch((error) => {
-      connected = false;
-      document.querySelector('.connected-msg').innerHTML = 'disconnected';
-    });
+  const endpoints = [
+    'http://192.168.1.201',
+    'http://192.168.1.202',
+    'http://192.168.1.203',
+    'http://192.168.1.204',
+    'http://192.168.1.205',
   }
-  setInterval(() => {
-    checkIfOnline();
-  }, 5000);
-  checkIfOnline();
+  // let connected = false;
+  // function checkIfOnline() {
+  //   fetch(`${endpoint}/ping`)
+  //   .then((response) => {
+  //     if (response.status === 200) {
+  //       connected = true;
+  //       document.querySelector('.connected-msg').innerHTML = 'connected';
+  //     } else {
+  //       connected = false;
+  //       document.querySelector('.connected-msg').innerHTML = 'disconnected';
+  //     }
+  //   })
+  //   .catch((error) => {
+  //     connected = false;
+  //     document.querySelector('.connected-msg').innerHTML = 'disconnected';
+  //   });
+  // }
+  // setInterval(() => {
+  //   checkIfOnline();
+  // }, 5000);
+  // checkIfOnline();
 
   let hsl = {
     h: 0,
@@ -168,26 +174,30 @@
   function shutdown() {
     if (confirm('Are you sure you want to shutdown the Pi?')) {
       setBrightness(0.0);
-      setTimeout(() => fetch(`${endpoint}/shutdown`), 500);
+      for (ip in endpoints) {
+        setTimeout(() => fetch(`${ip}/shutdown`), 500);
+      }
     }
   }
 
-  let checkServerInterval = null;
-  function checkIfServerBack() {
-    fetch(`${endpoint}/ping`)
-    .then((response) => {
-      if (response.status === 200) {
-        clearInterval(checkServerInterval);
-        window.location.reload(true);
-      }
-    })
-  }
+  // let checkServerInterval = null;
+  // function checkIfServerBack() {
+  //   fetch(`${endpoint}/ping`)
+  //   .then((response) => {
+  //     if (response.status === 200) {
+  //       clearInterval(checkServerInterval);
+  //       window.location.reload(true);
+  //     }
+  //   })
+  // }
   function update() {
     if (confirm('Do you want to check for new code and reboot?')) {
       document.querySelector('.update-msg').style.display = 'block';
       document.querySelector('.maintenance-buttons').style.display = 'none';
       document.querySelector('#color-picker').style.display = 'none';
-      fetch(`${endpoint}/update`)
+      for (ip in endpoints) {
+        fetch(`${ip}/update`)
+      }
       checkServerInterval = setInterval(() => {
         checkIfServerBack();
       }, 5000);
@@ -199,28 +209,38 @@
     setPattern(1624446887029);
     const paletteId = 1624449450971;
     setPalette(paletteId);
-    fetch(`${endpoint}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SlowPulsePalette"}`)
-    .then((response) => {
-      setSpeed(0.2)
-      setBrightness(0.8);
-    })
+    for (ip in endpoints){
+      fetch(`${ip}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SlowPulsePalette"}`)
+      .then((response) => {
+        setSpeed(0.2)
+        setBrightness(0.8);
+      })
+    }
   }
 
   function setPattern(value) {
-    fetch(`${endpoint}/setparam?key=primary_pattern&value=${value}`)
+    for (ip in endpoints) {
+      fetch(`${ip}/setparam?key=primary_pattern&value=${value}`)
+    }
   }
 
   function setPalette(value) {
-    fetch(`${endpoint}/setparam?key=palette&value=${value}`)
+    for (ip in endpoints) {
+      fetch(`${ip}/setparam?key=palette&value=${value}`)
+    }
   }
 
   function setBrightness(value) {
-    fetch(`${endpoint}/setparam?key=brightness&value=${value}`)
+    for (ip in endpoints) {
+      fetch(`${ip}/setparam?key=brightness&value=${value}`)
+     }
   }
 
   function setSpeed(value) {
-    fetch(`${endpoint}/setparam?key=primary_speed&value=${value}`)
-  }
+    for (ip in endpoints) {
+      fetch(`${ip}/setparam?key=primary_speed&value=${value}`)
+    }
+ }
 
   </script>
 </body>
