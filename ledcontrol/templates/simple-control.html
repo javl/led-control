@@ -91,6 +91,7 @@
   <div class="button-container">
     <button onclick="setStrobe()"><i class="fas fa-bahai"></i> Strobe</button>
     <button onclick="setJellyfish()"><i class="fa-solid fa-spaghetti-monster-flying"></i> Jellyfish</button>
+    <button onclick="setWarning()"><i class="fa-solid fa-warning"></i> Warning</button>
   </div>
   <div id="color-picker"></div>
   <button id="color-preview" onclick="sendColor()"><i class="fas fa-adjust"></i> Set Glow</button>
@@ -103,7 +104,7 @@
   <script src="static/js/iro.min.js"></script>
 
   <script>
-  const endpoint = 'http://192.168.1.100';
+  const endpoint = 'http://192.168.1.202';
   let connected = false;
   function checkIfOnline() {
     fetch(`${endpoint}/ping`)
@@ -155,6 +156,12 @@
     setPalette(1624275666283);
     setBrightness(0.6);
     setSpeed(0.2);
+  }
+
+  function setWarning(){
+    setPattern(1628856045832);
+    setBrightness(0.6);
+    setSpeed(0.27);
   }
 
   function shutdown() {
