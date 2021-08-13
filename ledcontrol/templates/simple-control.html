@@ -174,7 +174,8 @@
   function shutdown() {
     if (confirm('Are you sure you want to shutdown the Pi?')) {
       setBrightness(0.0);
-      for (ip in endpoints) {
+      for (let i=0; i<endpoints.length;i++) {
+        const ip = endpoints[i]
         setTimeout(() => fetch(`${ip}/shutdown`), 500);
       }
     }
@@ -195,7 +196,8 @@
       document.querySelector('.update-msg').style.display = 'block';
       document.querySelector('.maintenance-buttons').style.display = 'none';
       document.querySelector('#color-picker').style.display = 'none';
-      for (ip in endpoints) {
+      for (let i=0; i<endpoints.length;i++) {
+        const ip = endpoints[i]
         fetch(`${ip}/update`)
       }
       checkServerInterval = setInterval(() => {
@@ -209,7 +211,8 @@
     setPattern(1624446887029);
     const paletteId = 1624449450971;
     setPalette(paletteId);
-    for (ip in endpoints){
+    for (let i=0; i<endpoints.length;i++) {
+      const ip = endpoints[i]
       fetch(`${ip}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SlowPulsePalette"}`)
       .then((response) => {
         setSpeed(0.2)
@@ -219,25 +222,29 @@
   }
 
   function setPattern(value) {
-    for (ip in endpoints) {
+    for (let i=0; i<endpoints.length;i++) {
+      const ip = endpoints[i]
       fetch(`${ip}/setparam?key=primary_pattern&value=${value}`)
     }
   }
 
   function setPalette(value) {
-    for (ip in endpoints) {
+    for (let i=0; i<endpoints.length;i++) {
+      const ip = endpoints[i]
       fetch(`${ip}/setparam?key=palette&value=${value}`)
     }
   }
 
   function setBrightness(value) {
-    for (ip in endpoints) {
+    for (let i=0; i<endpoints.length;i++) {
+      const ip = endpoints[i]
       fetch(`${ip}/setparam?key=brightness&value=${value}`)
      }
   }
 
   function setSpeed(value) {
-    for (ip in endpoints) {
+    for (let i=0; i<endpoints.length;i++) {
+      const ip = endpoints[i]
       fetch(`${ip}/setparam?key=primary_speed&value=${value}`)
     }
  }
