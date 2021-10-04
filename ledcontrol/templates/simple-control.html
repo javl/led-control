@@ -156,6 +156,7 @@
     setPattern(1624276202155);
     setBrightness(0.8);
     setSpeed(1.0);
+    resetTimer();
   }
 
   function setJellyfish(){
@@ -163,12 +164,14 @@
     setPalette(1624275666283);
     setBrightness(0.6);
     setSpeed(0.2);
+    resetTimer();
   }
 
   function setWarning(){
     setPattern(1628856045832);
     setBrightness(0.6);
     setSpeed(0.27);
+    resetTimer();
   }
 
   function shutdown() {
@@ -204,6 +207,13 @@
         checkIfServerBack();
       }, 5000);
       checkIfServerBack();
+    }
+  }
+
+  function resetTimer(){
+    for (let i=0; i<endpoints.length;i++) {
+      const ip = endpoints[i]
+      fetch(`${ip}/resettimer`)
     }
   }
 
