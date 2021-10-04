@@ -40,7 +40,16 @@ Open `wpa_supplicant.conf` and enter the following (replace PASSWORD with the ac
 11. Install some dependencies: `sudo apt install git-core scons swig python3 python3-dev python3-setuptools -y`
 12. Clone our code repository: `git clone --recurse-submodules https://github.com/javl/led-control.git`
 13. Enter the new directory and switch to the right branch: `cd led-control; git fetch --all; git checkout artur`
+14. If using a Rpi 4 4gb, we need to update rpi_ws28x, add the following to `ledcontrol/driver/rpi_ws281x/rpihw.c`
+    {
+        .hwver = 0xc03114,
+        .type = RPI_HWVER_TYPE_PI4,
+        .periph_base = PERIPH_BASE_RPI4,
+        .videocore_base = VIDEOCORE_BASE_RPI2,
+        .desc = "Pi 4 Model B - 4GB v1.4"
+    },
 14. Enter the new directory and install the project (nothing might seem to happen for a few minutes): `cd led-control; sudo python3 setup.py develop`
+15. Test if compiling was succesful: `sudo ledcontrol --led_count 289 --led_pixel_order RGB --led_pin 12`
 15. Move the startup script to the right location: `sudo cp ledcontrol.service /etc/systemd/system/ledcontrol.service`
 16. Enable the service so it starts after boot: `sudo systemctl enable ledcontrol.service`
 17. Make sure we can shutdown the Pi as non-root user from the web interface. Open the sudo settings with `sudo visudo` and add the following lines:
@@ -60,18 +69,18 @@ With the SD card side facing up and ethernet facing down:
     .x  <-- ground
     ..
     ..
+    .x
+    ..
+    ..
+    ..
+    ..
+    ..
+    ..
+    ..
+    ..
+    ..
+    ..
     .x  <-- LED data
-    ..
-    ..
-    ..
-    ..
-    ..
-    ..
-    ..
-    ..
-    ..
-    ..
-    ..
     ..
     ..
     ..
