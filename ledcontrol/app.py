@@ -3,7 +3,7 @@
 
 import json
 import atexit
-from recordclass import recordclass
+from dataclasses import dataclass, field
 from threading import Timer
 from pathlib import Path
 from flask import Flask, render_template, request, jsonify
@@ -15,34 +15,59 @@ import ledcontrol.pixelmappings as pixelmappings
 import ledcontrol.animationpatterns as animpatterns
 import ledcontrol.colorpalettes as colorpalettes
 import ledcontrol.utils as utils
-
 import os
+# Data class for form items
+@dataclass
+class FormItem:
+    control: str
+    key: str = 'None'
+    type: type = None
+    min: float = 0
+    max: float = 1
+    step: float = 0.01
+    options: list = field(default_factory=list)
+    val: float = 0
+    label: str = ''
+    unit: str = ''
+    hide: bool = False
 
-# Record class for form items
-FormItem = recordclass('FormItem', [
-    'control', 'key', 'type', 'min', 'max', 'step', 'options', 'val',
-    'label', 'unit', 'hide',
-], defaults=[
-    'range', 'None', None, 0, 1, 0.01, [], 0,
-    '', '', False,
-])
-
-def create_app(led_count, refresh_rate,
-               led_pin, led_data_rate, led_dma_channel,
+def create_app(led_count,
+               pixel_mapping,
+               refresh_rate,
+               led_pin,
+               led_data_rate,
+               led_dma_channel,
                led_pixel_order,
-               led_color_correction, led_v_limit,
+               led_color_correction,
+               led_v_limit,
                save_interval,
-               allow_direct_control):
+               enable_sacn,
+               no_timer_reset):
     app = Flask(__name__)
 
     cors = CORS(app, resources={r"*": {"origins": "*"}})
 
-    leds = LEDController(led_count, led_pin,
-                         led_data_rate, led_dma_channel,
+    # Create pixel mapping function
+    if pixel_mapping is not None:
+        print(f'Using pixel mapping from file ({len(pixel_mapping)} LEDs)')
+        led_count = len(pixel_mapping)
+        mapping_func = pixelmappings.from_array(pixel_mapping)
+    else:
+        print(f'Using default linear pixel mapping ({led_count} LEDs)')
+        mapping_func = pixelmappings.line(led_count)
+
+    leds = LEDController(led_count,
+                         led_pin,
+                         led_data_rate,
+                         led_dma_channel,
                          led_pixel_order)
-    controller = AnimationController(leds, refresh_rate, led_count,
-                                     pixelmappings.line(led_count),
-                                     led_color_correction)
+    controller = AnimationController(leds,
+                                     refresh_rate,
+                                     led_count,
+                                     mapping_func,
+                                     led_color_correction,
+                                     enable_sacn,
+                                     no_timer_reset)
 
     patterns = dict(animpatterns.default)
 
@@ -53,29 +78,39 @@ def create_app(led_count, refresh_rate,
     # Init controller params and custom patterns from settings file
     with open(str(filename), mode='r') as data_file:
         try:
-            settings = json.loads(data_file.read().replace('master_', ''))
+            settings_str = data_file.read()
+            # Apply updates to old versions of settings file
+            settings_str = settings_str.replace('master_', '')
+            settings_str = settings_str.replace('pattern(t, dt, x, y, prev_state)',
+                                                'pattern(t, dt, x, y, z, prev_state)')
+            settings = json.loads(settings_str)
+
             # Enforce brightness limit
             settings['params']['brightness'] = min(
                 settings['params']['brightness'], led_v_limit)
+
             # Set controller params, recalculate things that depend on params
             controller.params.update(settings['params'])
-            controller.params['direct_control_mode'] = 0
+            controller.params['sacn'] = 0
             controller.calculate_color_correction()
             controller.calculate_mappings()
+
             # Read custom patterns and changed params for default patterns
             for k, v in settings['patterns'].items():
                 # JSON keys are always strings
-                if int(k) not in animpatterns.default:
+                if int(k) not in animpatterns.default and 'source' in v:
                     patterns[int(k)] = v
                     controller.set_pattern_function(int(k), v['source'])
                 else:
                     patterns[int(k)].update(v)
+
             # Read color palettes
             controller.palettes.update({int(k): v for k, v in settings['palettes'].items()})
             controller.calculate_palette_table()
             print(f'Loaded saved settings from {filename}.')
+
         except Exception:
-            print(f'Could not open saved settings at {filename}, ignoring.')
+            print(f'Some saved settings at {filename} are out of date or invalid, ignoring.')
 
     # Define form and create user-facing labels based on keys
     form = [
@@ -96,12 +131,12 @@ def create_app(led_count, refresh_rate,
         FormItem('colors'),
     ]
 
-    if allow_direct_control:
-        form.append(FormItem('select', 'direct_control_mode', int,
-                             options=['Off', 'On']))
-
     for item in form:
         item.label = utils.snake_to_title(item.key)
+
+    if enable_sacn:
+        form.append(FormItem('select', 'sacn', int,
+                             options=['Off', 'On'], label='E1.31 sACN Receiver Mode'))
 
     @app.route('/')
     def get_control():
@@ -143,11 +178,16 @@ def create_app(led_count, refresh_rate,
         'Sets a key/value pair in controller parameters'
         key = request.args.get('key', type=str)
         value = request.args.get('value')
+        form_item = next(filter(lambda i: i.key == key, form))
         if key == 'primary_pattern':
             save_current_pattern_params()
             controller.set_param('primary_speed', patterns[int(value)]['primary_speed'])
             controller.set_param('primary_scale', patterns[int(value)]['primary_scale'])
-        controller.set_param(key, next(filter(lambda i: i.key == key, form)).type(value))
+
+        value = form_item.type(value)
+        if form_item.control == 'range':
+            value = utils.clamp(value, form_item.min, form_item.max)
+        controller.set_param(key, value)
         return jsonify(result='')
 
     @app.route('/getpatternparams')
@@ -222,6 +262,12 @@ def create_app(led_count, refresh_rate,
     def get_fps():
         'Returns latest animation frames per second'
         return jsonify(fps=controller.timer.get_rate())
+
+    @app.route('/resettimer')
+    def reset_timer():
+        'Resets animation timer'
+        controller.reset_timer()
+        return jsonify(result='')
 
     def save_current_pattern_params():
         'Remembers speed and scale for current pattern'

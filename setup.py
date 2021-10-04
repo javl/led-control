@@ -21,16 +21,15 @@ class PreInstallCommand(install):
         install.run(self)
 
 requirements = [
-    'recordclass>=0.12.0.1',
     'Flask>=1.0.2',
     'Flask-Cors>=3.0.10',
     'RestrictedPython>=4.0',
-    'ujson>=3.1.0',
+    'sacn>=1.8.1',
 ]
 
 setup(
     name='led-control',
-    version='1.1.0',
+    version='1.3.0',
     description='WS2812 LED strip controller with web interface for Raspberry Pi',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
