@@ -32,6 +32,13 @@ function handleInputChange(elem) {
   // On palette change, update color pickers
   if (key === 'palette') updateColorPickers(val);
 
+  // On sACN mode change, hide or show UI
+  if (key === 'sacn') {
+    const elems = $('.input-toplevel:not(.input-toplevel[data-id=brightness], .input-toplevel[data-id=color_temp], .input-toplevel[data-id=sacn]), #code, #palette-color-bar, #colors');
+    if (val === 1) elems.hide();
+    else elems.show();
+  }
+
   return { key: key, value: val };
 }
 
@@ -144,6 +151,7 @@ function updateCodeView(newKey) {
 
 // Send the current palette to the server
 function updateCurrentPalette() {
+  updatePaletteColorBar();
   const key = getCurrentPaletteKey();
   $.getJSON('/setpalette', {
     key: key, value: JSON.stringify(palettes[key])
@@ -188,6 +196,67 @@ function handleRenamePalette() {
   updateCurrentPalette();
 }
 
+// Update palette preview
+function updatePaletteColorBar() {
+  const palette = palettes[getCurrentPaletteKey()];
+  const c = document.getElementById('palette-color-bar');
+  const ctx = c.getContext('2d');
+  c.width = 64;
+  c.height = 1;
+  const sectorSize = 1 / (palette.colors.length - 1);
+  for (let i = 0; i < c.width; i++) {
+    let f = i / c.width;
+    const sector = Math.floor(f / sectorSize);
+    f = f % sectorSize / sectorSize;
+    const c1 = palette.colors[sector];
+    const c2 = palette.colors[sector + 1];
+    let h1 = c2[0] - c1[0];
+    // Allow full spectrum if extremes are 0 and 1 in any order
+    // otherwise pick shortest path between colors
+    if (Math.abs(h1) != 1) {
+      if (h1 < -0.5) h1++;
+      if (h1 > 0.5) h1--;
+    }
+    const h = (f * h1 + c1[0]) * 360;
+    const s = (f * (c2[1] - c1[1]) + c1[1]) * 100;
+    const v = (f * (c2[2] - c1[2]) + c1[2]) * 100;
+    const l = (2 - s / 100) * v / 2;
+    const s2 = s * v / (l < 50 ? l * 2 : 200 - l * 2);
+    ctx.fillStyle = `hsl(${h}, ${s}%, ${l}%)`
+    ctx.fillRect(i, 0, 1, c.height);
+  }
+  /*
+  Object.values(palettes).forEach((palette) => {
+    const nc = document.createElement('canvas');
+    nc.style.display = 'block';
+    nc.style.borderRadius = '3px';
+    nc.style.width = '100%';
+    nc.style.height = '1.7rem';
+    nc.style.marginBottom = '1.5rem';
+    document.getElementById('main').insertBefore(nc, c);
+    const ctx = nc.getContext('2d');
+    nc.width = 64;
+    nc.height = 1;
+    const sectorSize = 1 / (palette.colors.length - 1);
+    for (let i = 0; i < nc.width; i++) {
+      let f = i / nc.width;
+      const sector = Math.floor(f / sectorSize);
+      f = f % sectorSize / sectorSize;
+      const c1 = palette.colors[sector];
+      const c2 = palette.colors[sector + 1];
+      const h1 = c2[0] - c1[0];
+      const h2 = c2[0] - 1 - c1[0];
+      const h = (f * (Math.abs(h1) < Math.abs(h2) || h1 === 1 ? h1 : h2) + c1[0]) * 360;
+      const s = (f * (c2[1] - c1[1]) + c1[1]) * 100;
+      const v = (f * (c2[2] - c1[2]) + c1[2]) * 100;
+      const l = (2 - s / 100) * v / 2;
+      const s2 = s * v / (l < 50 ? l * 2 : 200 - l * 2);
+      ctx.fillStyle = `hsl(${h}, ${s}%, ${l}%)`
+      ctx.fillRect(i, 0, 1, nc.height);
+    }
+  });*/
+}
+
 // Update color pickers for selected palette
 function updateColorPickers(newKey) {
   const palette = palettes[newKey];
@@ -207,7 +276,7 @@ function updateColorPickers(newKey) {
   container.empty();
 
   for (let i = 0; i < palette.colors.length; i++) {
-    container.append(`<div class="input-row input-row-top-margin"><span class="label"> Color ${i + 1}:</span><a class="button button-inline" id="add-color-${i}">+</a><a class="button button-inline" id="delete-color-${i}">-</a></div><span class="color-picker" id="color-picker-${i}"></span>`);
+    container.append(`<div class="input-row input-row-top-margin"><span class="label"> Color ${i + 1}:</span><a class="button button-inline palette-color-control" id="add-color-${i}">+</a><a class="button button-inline palette-color-control" id="delete-color-${i}">-</a></div><span class="color-picker" id="color-picker-${i}"></span>`);
     const pickr = Pickr.create({
       el: `#color-picker-${i}`,
       theme: 'classic',
@@ -250,8 +319,12 @@ function updateColorPickers(newKey) {
           updateCurrentPalette();
         }
       });
+    } else {
+      $('.palette-color-control').hide();
     }
   }
+
+  updatePaletteColorBar();
 }
 
 function getCurrentPatternKey() {
@@ -278,6 +351,8 @@ window.onload = function() {
   $('#delete-palette').on('click', handleDeletePalette);
   $('#palette-name').on('change', handleRenamePalette);
 
+  handleInputChange($('select[data-id="sacn"]'));
+
   $.getJSON('/getpatternsources', {}, (result) => {
     console.log('Sources:', result);
     // Set selected pattern to correct value
@@ -300,6 +375,12 @@ window.onload = function() {
       lineNumbers: true,
       lineWrapping: true,
       theme: 'summer-night',
+    });
+    codeMirror.setOption('extraKeys', {
+      Tab: function(cm) {
+        const spaces = Array(cm.getOption('indentUnit') + 1).join(' ');
+        cm.replaceSelection(spaces);
+      }
     });
     updateCodeView(result.current);
   });

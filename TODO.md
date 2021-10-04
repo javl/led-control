@@ -63,7 +63,6 @@
 - [x] patterns - hsv waves
 
 ### Extras
-- [ ] password protection
 - [x] SK6812 RGBW support
 - [x] per-pattern speed/scale
 - [x] delete pattern
@@ -73,9 +72,21 @@
 - [x] web UI palette create/rename
 - [x] web UI palette delete
 - [x] web UI palette add/remove colors
-- [x] update hsv patterns to palettes
-- [x] palette based - multi color wipe/bands
-- [x] palette based - ripples
-- [x] palette based - random wipe
+- [x] update existing hsv patterns to palettes
+- [x] palette - multi color wipe/bands
+- [x] palette - ripples
+- [x] palette - random wipe
+
+### Extras 2
+- [x] better default palettes
+- [x] palette based - plasma
+- [x] DMX
+- [x] render animations to images for readme
+- [x] add palette_mirrored utility for performance
+- [x] pixel mapping
+- [x] 3D
+- [ ] timer
+- [ ] pixel mapping global rotation/scale
+- [ ] pixel mapping editor
 
 sudo ledcontrol --led_count 150 --led_pixel_order GRBW --led_color_correction "#FFA8FF"

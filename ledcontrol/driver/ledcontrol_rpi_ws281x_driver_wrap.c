@@ -7208,6 +7208,50 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_float_to_int_1000(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  float arg1 ;
+  float val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  int result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:float_to_int_1000",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_float(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "float_to_int_1000" "', argument " "1"" of type '" "float""'");
+  } 
+  arg1 = (float)(val1);
+  result = (int)float_to_int_1000(arg1);
+  resultobj = SWIG_From_int((int)(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_float_to_int_1000_mirror(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  float arg1 ;
+  float val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  int result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:float_to_int_1000_mirror",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_float(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "float_to_int_1000_mirror" "', argument " "1"" of type '" "float""'");
+  } 
+  arg1 = (float)(val1);
+  result = (int)float_to_int_1000_mirror(arg1);
+  resultobj = SWIG_From_int((int)(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_wave_pulse(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   float arg1 ;
@@ -7626,6 +7670,73 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_fbm_noise_3d(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  float arg1 ;
+  float arg2 ;
+  float arg3 ;
+  uint8_t arg4 ;
+  float arg5 ;
+  float arg6 ;
+  float val1 ;
+  int ecode1 = 0 ;
+  float val2 ;
+  int ecode2 = 0 ;
+  float val3 ;
+  int ecode3 = 0 ;
+  unsigned char val4 ;
+  int ecode4 = 0 ;
+  float val5 ;
+  int ecode5 = 0 ;
+  float val6 ;
+  int ecode6 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  PyObject * obj5 = 0 ;
+  float result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOOOO:fbm_noise_3d",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5)) SWIG_fail;
+  ecode1 = SWIG_AsVal_float(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "fbm_noise_3d" "', argument " "1"" of type '" "float""'");
+  } 
+  arg1 = (float)(val1);
+  ecode2 = SWIG_AsVal_float(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "fbm_noise_3d" "', argument " "2"" of type '" "float""'");
+  } 
+  arg2 = (float)(val2);
+  ecode3 = SWIG_AsVal_float(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "fbm_noise_3d" "', argument " "3"" of type '" "float""'");
+  } 
+  arg3 = (float)(val3);
+  ecode4 = SWIG_AsVal_unsigned_SS_char(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "fbm_noise_3d" "', argument " "4"" of type '" "uint8_t""'");
+  } 
+  arg4 = (uint8_t)(val4);
+  ecode5 = SWIG_AsVal_float(obj4, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "fbm_noise_3d" "', argument " "5"" of type '" "float""'");
+  } 
+  arg5 = (float)(val5);
+  ecode6 = SWIG_AsVal_float(obj5, &val6);
+  if (!SWIG_IsOK(ecode6)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "fbm_noise_3d" "', argument " "6"" of type '" "float""'");
+  } 
+  arg6 = (float)(val6);
+  result = (float)fbm_noise_3d(arg1,arg2,arg3,arg4,arg5,arg6);
+  resultobj = SWIG_From_float((float)(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 static PyMethodDef SwigMethods[] = {
 	 { "SWIG_PyInstanceMethod_New", SWIG_PyInstanceMethod_New, METH_O, NULL},
 	 { "ws2811_channel_t_gpionum_set", _wrap_ws2811_channel_t_gpionum_set, METH_VARARGS, NULL},
@@ -7763,6 +7874,8 @@ static PyMethodDef SwigMethods[] = {
 	 { "render_rgb_float", _wrap_render_rgb_float, METH_VARARGS, NULL},
 	 { "ws2811_hsv_render_array_float", _wrap_ws2811_hsv_render_array_float, METH_VARARGS, NULL},
 	 { "ws2811_rgb_render_array_float", _wrap_ws2811_rgb_render_array_float, METH_VARARGS, NULL},
+	 { "float_to_int_1000", _wrap_float_to_int_1000, METH_VARARGS, NULL},
+	 { "float_to_int_1000_mirror", _wrap_float_to_int_1000_mirror, METH_VARARGS, NULL},
 	 { "wave_pulse", _wrap_wave_pulse, METH_VARARGS, NULL},
 	 { "wave_triangle", _wrap_wave_triangle, METH_VARARGS, NULL},
 	 { "wave_sine", _wrap_wave_sine, METH_VARARGS, NULL},
@@ -7773,6 +7886,7 @@ static PyMethodDef SwigMethods[] = {
 	 { "lerp", _wrap_lerp, METH_VARARGS, NULL},
 	 { "grad", _wrap_grad, METH_VARARGS, NULL},
 	 { "perlin_noise_3d", _wrap_perlin_noise_3d, METH_VARARGS, NULL},
+	 { "fbm_noise_3d", _wrap_fbm_noise_3d, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };
 

@@ -4,6 +4,7 @@
 __version__ = '1.0.0'
 
 import argparse
+import json
 from ledcontrol.app import create_app
 from werkzeug.serving import run_simple
 
@@ -15,10 +16,12 @@ def main():
                         help='Hostname to use for web interface. Default: 0.0.0.0')
     parser.add_argument('--led_count', type=int, default=0,
                         help='Number of LEDs')
+    parser.add_argument('--pixel_mapping_json', type=argparse.FileType('r'),
+                        help='JSON file containing pixel mapping (see README)')
     parser.add_argument('--fps', type=int, default=60,
                         help='Refresh rate limit for LEDs, in FPS. Default: 60')
     parser.add_argument('--led_pin', type=int, default=18,
-                        help='Pin for LEDs (see https://github.com/jgarff/rpi_ws281x).. Default: 18')
+                        help='Pin for LEDs (see https://github.com/jgarff/rpi_ws281x). Default: 18')
     parser.add_argument('--led_data_rate', type=int, default=800000,
                         help='Data rate for LEDs. Default: 800000 Hz')
     parser.add_argument('--led_dma_channel', type=int, default=10,
@@ -31,19 +34,31 @@ def main():
                         help='LED maximum brightness limit for the web UI. Float from 0.0-1.0. Default: 1.0')
     parser.add_argument('--save_interval', type=int, default=60,
                         help='Interval for automatically saving settings in seconds. Default: 60')
-    parser.add_argument('--allow_direct_control', type=bool, default=False,
-                        help='Allow direct remote control of LEDs (experimental). Default: False')
+    parser.add_argument('--sacn', action='store_true',
+                        help='Enable sACN / E1.31 support. Default: False')
+    parser.add_argument('--no_timer_reset', action='store_true',
+                        help='Do not reset the animation timer and state when patterns are changed. Default: False')
     args = parser.parse_args()
+
+    pixel_mapping = None
+    if args.pixel_mapping_json is not None:
+        pixel_mapping = json.load(args.pixel_mapping_json)
+        args.pixel_mapping_json.close()
 
     color_correction_hex = args.led_color_correction.lstrip('#')
 
-    app = create_app(args.led_count, args.fps,
-                     args.led_pin, args.led_data_rate, args.led_dma_channel,
+    app = create_app(args.led_count,
+                     pixel_mapping,
+                     args.fps,
+                     args.led_pin,
+                     args.led_data_rate,
+                     args.led_dma_channel,
                      args.led_pixel_order.upper(),
                      [int(color_correction_hex[i:i + 2], 16) for i in (0, 2, 4)],
                      args.led_brightness_limit,
                      args.save_interval,
-                     args.allow_direct_control)
+                     args.sacn,
+                     args.no_timer_reset)
     run_simple(args.host, args.port, app,
                use_reloader=False,
                use_debugger=True,
