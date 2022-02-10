@@ -106,7 +106,7 @@ notes.md
 notes2.md
 .vscode/
 
-ledcontrol.json
+#ledcontrol.json
 restrictedtest.py
 *.scssc
 testmapping.json

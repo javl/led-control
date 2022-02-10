@@ -1,0 +1,282 @@
+{
+    "palettes": {
+        "1624275666283": {
+            "colors": [
+                [
+                    0.9361111111111111,
+                    0.7263158453411042,
+                    0.6352940727682674
+                ],
+                [
+                    0.9361111111111111,
+                    0.9002288888193649,
+                    0.967892141903148
+                ],
+                [
+                    0.9361111111111111,
+                    0.8819222526637586,
+                    0.3299019757439109
+                ],
+                [
+                    0.9361111111111111,
+                    0.9130434782608695,
+                    0.9568000000000001
+                ],
+                [
+                    0.6222222222222222,
+                    0.9989702237825372,
+                    0.015440996955422719
+                ],
+                [
+                    0.6222222222222222,
+                    0.9989702237825372,
+                    0.015440996955422719
+                ],
+                [
+                    0.6222222222222222,
+                    0.9989702237825372,
+                    0.015440996955422719
+                ],
+                [
+                    0.6222222222222222,
+                    0.9989702237825372,
+                    0.015440996955422719
+                ],
+                [
+                    0.6222222222222222,
+                    0.9989702237825372,
+                    0.015440996955422719
+                ],
+                [
+                    0.6222222222222222,
+                    0.9989702237825372,
+                    0.06127436020795045
+                ]
+            ],
+            "mode": 0,
+            "name": "JellyfishColors"
+        },
+        "1624290237337": {
+            "colors": [
+                [
+                    0.8559283088235294,
+                    0,
+                    1
+                ],
+                [
+                    0.4131433823529411,
+                    0.04841485507246377,
+                    1
+                ]
+            ],
+            "mode": 0,
+            "name": "SolidColor"
+        },
+        "1624365435075": {
+            "colors": [
+                [
+                    0.9368106617647058,
+                    0.942762362782777,
+                    0.8999999551212086
+                ],
+                [
+                    0.9361111111111111,
+                    0.9002288888193649,
+                    0.967892141903148
+                ],
+                [
+                    0.9361111111111111,
+                    0.8819222526637586,
+                    0.3299019757439109
+                ],
+                [
+                    0.9361111111111111,
+                    0.9130434782608695,
+                    0.9568000000000001
+                ],
+                [
+                    0.6222222222222222,
+                    0.9989702237825372,
+                    0.015440996955422719
+                ],
+                [
+                    0.6222222222222222,
+                    0.9989702237825372,
+                    0.015440996955422719
+                ],
+                [
+                    0.6222222222222222,
+                    0.9989702237825372,
+                    0.015440996955422719
+                ],
+                [
+                    0.6222222222222222,
+                    0.9989702237825372,
+                    0.015440996955422719
+                ],
+                [
+                    0.6222222222222222,
+                    0.9989702237825372,
+                    0.015440996955422719
+                ],
+                [
+                    0.6222222222222222,
+                    0.9989702237825372,
+                    0.06127436020795045
+                ]
+            ],
+            "mode": 0,
+            "name": "eigen"
+        },
+        "1624449450971": {
+            "colors": [
+                [
+                    0.9611111111111111,
+                    1,
+                    0.5
+                ],
+                [
+                    0.9611111111111111,
+                    1,
+                    0.5
+                ]
+            ],
+            "mode": 0,
+            "name": "SlowPulsePalette"
+        }
+    },
+    "params": {
+        "brightness": 0.6,
+        "color_temp": 5800,
+        "direct_control_mode": 0,
+        "gamma": 1.0,
+        "palette": 1624275666283,
+        "primary_pattern": 1628856045832,
+        "primary_scale": 1.0,
+        "primary_speed": 0.16,
+        "saturation": 1.0,
+        "secondary_pattern": 0,
+        "secondary_scale": 1.0,
+        "secondary_speed": 1.0
+    },
+    "patterns": {
+        "0": {
+            "primary_scale": 1.0,
+            "primary_speed": 1.09
+        },
+        "1": {
+            "primary_scale": 1.0,
+            "primary_speed": 1.0
+        },
+        "10": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "20": {
+            "primary_scale": 1.46,
+            "primary_speed": 0.28
+        },
+        "30": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "31": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "32": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "33": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "40": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "50": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "60": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "70": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "71": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "80": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "90": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "100": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "110": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "120": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "121": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "130": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "131": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "140": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "1624276169004": {
+            "name": "Cycle Palette 1D (Copy)",
+            "primary_scale": 1.0,
+            "primary_speed": 0.2,
+            "source": "def pattern(t, dt, x, y, prev_state):\n    return palette(t + x), hsv"
+        },
+        "1624276202155": {
+            "name": "Strobe",
+            "primary_scale": 1.0,
+            "primary_speed": 1.0,
+            "source": "def pattern(t, dt, x, y,prev_state):\n    t = t % 1\n    temp = ((t * 16 ) % 16) % 2\n    return (0, 0, temp >= 1.0), hsv"
+        },
+        "1624277222886": {
+            "name": "JellyfishPattern",
+            "primary_scale": 1.0,
+            "primary_speed": 0.2,
+            "source": "def pattern(t, dt, x, y, prev_state):\n    return palette(t+x), hsv"
+        },
+        "1624446887029": {
+            "name": "SlowPulse",
+            "primary_scale": 1.0,
+            "primary_speed": 0.2,
+            "source": "def pattern(t, dt, x, y, prev_state):\n    return (palette(0)[0], palette(0)[1], wave_sine(t)), hsv"
+        },
+        "1628856045832": {
+            "name": "WarningPattern",
+            "primary_scale": 1.0,
+            "primary_speed": 0.16,
+            "source": "def pattern(t, dt, x, y,prev_state):\n    t = t % 1\n\n    temp = ((t * 24 ) % 24) % 2\n    if t > 0.25:\n        temp = 0\n    return (0, 1, temp >= 1.0), hsv"
+        }
+    }
+}

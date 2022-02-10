@@ -2,6 +2,18 @@
 
 ![screenshot.png](screenshot.png)
 
+## // =========================================
+## NOTE
+This fork of LED Control has been changed to be used in a specific project. These changes are:
+
+1. Added a second page with limited (hardcoded) controls at `/control` (using `simple-control.html`).
+2. Added `Flask-Cors` to prevent CORS warnings in the console
+3. Added an endpoint (`/shutdown`) for safely shutting down the Raspberry Pi
+
+Unless you want these specific changes, you might be better off using the original project [here](https://github.com/jackw01/led-control).
+
+## // =========================================
+
 ## Features
 * Lightweight responsive web interface works on both desktop and mobile devices
 * In-browser code editor and color palette editor make creating and modifying animations easy

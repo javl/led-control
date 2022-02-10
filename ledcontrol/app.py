@@ -139,15 +139,6 @@ def create_app(led_count,
                              options=['Off', 'On'], label='E1.31 sACN Receiver Mode'))
 
     @app.route('/')
-    def index():
-        'Returns web app page'
-        for item in form:
-            if (item.key in controller.params):
-                item.val = item.type(controller.params[item.key])
-        return render_template('index.html',
-                               form=form)
-
-    @app.route('/control')
     def get_control():
         'Returns a simpler HTML controller page'
         for item in form:
@@ -155,6 +146,32 @@ def create_app(led_count,
                 item.val = item.type(controller.params[item.key])
         return render_template('simple-control.html',
                                form=form)
+
+    @app.route('/ping')
+    def get_ping():
+        'Simple check to see if server is online'
+        return "pong"
+
+    @app.route('/setup')
+    def get_setup():
+        'Returns web app page'
+        for item in form:
+            if (item.key in controller.params):
+                item.val = item.type(controller.params[item.key])
+        return render_template('setup.html',
+                               form=form)
+
+    @app.route('/shutdown')
+    def get_shutdown():
+        'Shutdown the RPi'
+        os.system('sudo shutdown -h now')
+        return "Shutting down"
+
+    @app.route('/update')
+    def get_update():
+        'Pull the latest code from git'
+        os.system('sudo -u pi git -C /home/pi/led-control pull origin artur; sleep 2; sudo reboot')
+        return "Pulled code, rebooting"
 
     @app.route('/setparam')
     def set_param():

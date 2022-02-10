@@ -5,121 +5,257 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LED Control</title>
+
+  <link rel="apple-touch-icon" sizes="152x152" href="static/apple-touch-icon.png?v=1">
+  <link rel="icon" type="image/png" sizes="32x32" href="static/favicon-32x32.png?v=1">
+  <link rel="icon" type="image/png" sizes="16x16" href="static/favicon-16x16.png?v=1">
+  <link rel="manifest" href="static/site.webmanifest?v=1">
+  <link rel="mask-icon" href="static/safari-pinned-tab.svg?v=1" color="#5bbad5">
+  <link rel="shortcut icon" href="static/favicon.ico?v=1">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+
+  <link href="static/font-awesome-6-main/css/all.min.css" rel="stylesheet" />
   <style type="text/css">
-    button {
-      padding: 2rem;
-      font-size: 1.5rem;
+   html,
+   body {
+     width: 100%;
+     padding: 0;
+     margin: 0;
+     text-align: center;
+     background-color: black;
+     font-family: Verdana, Geneva, Tahoma, sans-serif;
     }
+
+    button {
+      width: 90%;
+      padding: 0.5rem;
+      font-size: 1.5rem;
+      background-color: white;
+      border: none;
+      border-radius: 4px;
+    }
+
+    #color-picker {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .button-container {
+      margin-bottom: 1rem;
+    }
+
+    .button-container button {
+      width: 90%;
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+
+    .maintenance-buttons {
+      margin-top: 500px;
+    }
+
+    .maintenance-btn {
+      margin-top: 1rem;
+      width: auto;
+    }
+
+    .update-msg {
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      color: white;
+      position: absolute;
+      left: 0;
+      top: 0;
+      display: none;
+      text-align: center;
+      font-size: 2rem;
+      padding-top: 200px;
+    }
+
+    .connected-msg {
+      margin-top: 1rem;
+      color: white;
+    }
+
   </style>
 </head>
 <body>
-  <h2>Set state:</h2>
-  <button onclick="setBrightness(0)">Off</button><br><br>
-  <button onclick="setPattern(1624276202155);setBrightness(0.1); setSpeed(1.0)">Strobe</button><br><br>
-  <button onclick="setPattern(1624277222886); setPalette(1624275666283);setBrightness(0.1); setSpeed(0.4)">Jellyfish</button>
-  <input type="color" value="#e66465" id="color-well" onchange="updateColor">
+  <div class="update-msg">
+    <div class="msg">
+      Looking for updates<br>and rebooting...
+    </div>
+  </div>
+  <button onclick="setBrightness(0)"><i class="far fa-lightbulb"></i> LEDs Off</button><br><br>
+  <div class="button-container">
+    <button onclick="setStrobe()"><i class="fas fa-bahai"></i> Strobe</button>
+    <button onclick="setJellyfish()"><i class="fa-solid fa-spaghetti-monster-flying"></i> Jellyfish</button>
+    <button onclick="setWarning()"><i class="fa-solid fa-warning"></i> Warning</button>
+    <button onclick="sync()">Sync</button>
+  </div>
+  <div id="color-picker"></div>
+  <button id="color-preview" onclick="sendColor()"><i class="fas fa-adjust"></i> Set Glow</button>
+  <!-- <div class="connected-msg">disconnected</div> -->
+  <div class="maintenance-buttons">
+    <button class="maintenance-btn" onclick="shutdown()"><i class="fas fa-power-off"></i> Shutdown Pi</button>
+    <button class="maintenance-btn" onclick="update()"><i class="fas fa-cloud-download-alt"></i> Update Code</button>
+  </div>
+
+  <script src="static/js/iro.min.js"></script>
 
   <script>
-    const endpoint = 'http://192.168.1.186/';
+  const endpoints = [
+    'http://192.168.1.201',
+    'http://192.168.1.202',
+    'http://192.168.1.203',
+    'http://192.168.1.204',
+    'http://192.168.1.205',
+  ];
+  // let connected = false;
+  // function checkIfOnline() {
+  //   fetch(`${endpoint}/ping`)
+  //   .then((response) => {
+  //     if (response.status === 200) {
+  //       connected = true;
+  //       document.querySelector('.connected-msg').innerHTML = 'connected';
+  //     } else {
+  //       connected = false;
+  //       document.querySelector('.connected-msg').innerHTML = 'disconnected';
+  //     }
+  //   })
+  //   .catch((error) => {
+  //     connected = false;
+  //     document.querySelector('.connected-msg').innerHTML = 'disconnected';
+  //   });
+  // }
+  // setInterval(() => {
+  //   checkIfOnline();
+  // }, 5000);
+  // checkIfOnline();
 
-    function hexToHSL(H) {
-      // Convert hex to RGB first
-      let r = 0, g = 0, b = 0;
-      if (H.length == 4) {
-        r = "0x" + H[1] + H[1];
-        g = "0x" + H[2] + H[2];
-        b = "0x" + H[3] + H[3];
-      } else if (H.length == 7) {
-        r = "0x" + H[1] + H[2];
-        g = "0x" + H[3] + H[4];
-        b = "0x" + H[5] + H[6];
+  let hsl = {
+    h: 0,
+    s: 0,
+    l: 0
+  };
+
+  const colorPicker = new iro.ColorPicker("#color-picker", {
+    width: 320,
+    color: "#f00"
+  });
+
+  colorPicker.on('color:change', function(color) {
+    hsl.h = color.hsl.h / 360.0;
+    hsl.s = color.hsl.s /100.0;
+    hsl.l = color.hsl.l /100.0;
+    document.querySelector('#color-preview').style.backgroundColor = color.rgbaString;
+  });
+
+  function setStrobe(){
+    setPattern(1624276202155);
+    setBrightness(1.0);
+    setSpeed(1.0);
+  }
+
+  function setJellyfish(){
+    setPattern(1624277222886);
+    setPalette(1624275666283);
+    setBrightness(1.0);
+    setSpeed(0.2);
+  }
+
+  function setWarning(){
+    setPattern(1628856045832);
+    setBrightness(1.0);
+    setSpeed(0.27);
+  }
+
+  function shutdown() {
+    if (confirm('Are you sure you want to shutdown the Pi?')) {
+      setBrightness(0.0);
+      for (let i=0; i<endpoints.length;i++) {
+        const ip = endpoints[i]
+        setTimeout(() => fetch(`${ip}/shutdown`), 500);
       }
-      // Then to HSL
-      r /= 255;
-      g /= 255;
-      b /= 255;
-      let cmin = Math.min(r,g,b),
-          cmax = Math.max(r,g,b),
-          delta = cmax - cmin,
-          h = 0,
-          s = 0,
-          l = 0;
-
-      if (delta == 0)
-        h = 0;
-      else if (cmax == r)
-        h = ((g - b) / delta) % 6;
-      else if (cmax == g)
-        h = (b - r) / delta + 2;
-      else
-        h = (r - g) / delta + 4;
-
-      h = Math.round(h * 60);
-
-      if (h < 0)
-        h += 360;
-
-      l = (cmax + cmin) / 2;
-      s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
-      s = +(s * 100).toFixed(1);
-      l = +(l * 100).toFixed(1);
-
-      return {
-        h: h/360.0,
-        s: s/100.0,
-        l: l/100.0
-      }
-      // return "hsl(" + h + "," + s + "%," + l + "%)";
     }
+  }
 
-    function updateColor(e) {
-      const paletteId = 1624290237337;
-      setPalette(paletteId);
-      console.log(e.target.value);
-      const hsl = hexToHSL(e.target.value);
-      console.log(hsl);
+  // let checkServerInterval = null;
+  // function checkIfServerBack() {
+  //   fetch(`${endpoint}/ping`)
+  //   .then((response) => {
+  //     if (response.status === 200) {
+  //       clearInterval(checkServerInterval);
+  //       window.location.reload(true);
+  //     }
+  //   })
+  // }
+  function update() {
+    if (confirm('Do you want to check for new code and reboot?')) {
+      document.querySelector('.update-msg').style.display = 'block';
+      document.querySelector('.maintenance-buttons').style.display = 'none';
+      document.querySelector('#color-picker').style.display = 'none';
+      for (let i=0; i<endpoints.length;i++) {
+        const ip = endpoints[i]
+        fetch(`${ip}/update`)
+      }
+      checkServerInterval = setInterval(() => {
+        checkIfServerBack();
+      }, 5000);
+      checkIfServerBack();
+    }
+  }
 
-      fetch(`${endpoint}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SolidColor"}`)
+  function sync(){
+    for (let i=0; i<endpoints.length;i++) {
+      const ip = endpoints[i]
+      fetch(`${ip}/resettimer`)
+    }
+  }
+
+  function sendColor() {
+    setPattern(1624446887029);
+    const paletteId = 1624449450971;
+    setPalette(paletteId);
+    for (let i=0; i<endpoints.length;i++) {
+      const ip = endpoints[i]
+      fetch(`${ip}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SlowPulsePalette"}`)
       .then((response) => {
-        setPattern(1);
-        setSpeed(1.0)
-        setBrightness(0.1);
-
+        setSpeed(0.2)
+        setBrightness(1.0);
       })
-      .then((data) => {
-      });
     }
+  }
 
-    function setPattern(value) {
-      fetch(`${endpoint}/setparam?key=primary_pattern&value=${value}`)
-      .then((response) => response.json())
-      .then((data) => console.log(data));
+  function setPattern(value) {
+    for (let i=0; i<endpoints.length;i++) {
+      const ip = endpoints[i]
+      fetch(`${ip}/setparam?key=primary_pattern&value=${value}`)
     }
+  }
 
-    function setPalette(value) {
-      fetch(`${endpoint}/setparam?key=palette&value=${value}`)
-      .then((response) => response.json())
-      .then((data) => console.log(data));
+  function setPalette(value) {
+    for (let i=0; i<endpoints.length;i++) {
+      const ip = endpoints[i]
+      fetch(`${ip}/setparam?key=palette&value=${value}`)
     }
+  }
 
-    function setBrightness(value) {
-      fetch(`${endpoint}/setparam?key=brightness&value=${value}`)
-      .then((response) => response.json())
-      .then((data) => console.log(data));
-    }
+  function setBrightness(value) {
+    for (let i=0; i<endpoints.length;i++) {
+      const ip = endpoints[i]
+      fetch(`${ip}/setparam?key=brightness&value=${value}`)
+     }
+  }
 
-    function setSpeed(value) {
-      fetch(`http://192.168.1.186/setparam?key=primary_speed&value=${value}`)
-      .then((response) => response.json())
-      .then((data) => console.log(data));
+  function setSpeed(value) {
+    for (let i=0; i<endpoints.length;i++) {
+      const ip = endpoints[i]
+      fetch(`${ip}/setparam?key=primary_speed&value=${value}`)
     }
-
-    window.addEventListener("load", startup, false);
-    function startup() {
-      colorWell = document.querySelector("#color-well");
-      colorWell.addEventListener("change", updateColor, false);
-      colorWell.select();
-    }
+ }
 
   </script>
 </body>
