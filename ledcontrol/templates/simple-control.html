@@ -93,6 +93,7 @@
     <button onclick="setStrobe()"><i class="fas fa-bahai"></i> Strobe</button>
     <button onclick="setJellyfish()"><i class="fa-solid fa-spaghetti-monster-flying"></i> Jellyfish</button>
     <button onclick="setWarning()"><i class="fa-solid fa-warning"></i> Warning</button>
+    <button onclick="sync()">Sync</button>
   </div>
   <div id="color-picker"></div>
   <button id="color-preview" onclick="sendColor()"><i class="fas fa-adjust"></i> Set Glow</button>
@@ -154,7 +155,7 @@
 
   function setStrobe(){
     setPattern(1624276202155);
-    setBrightness(0.8);
+    setBrightness(1.0);
     setSpeed(1.0);
     resetTimer();
   }
@@ -162,14 +163,14 @@
   function setJellyfish(){
     setPattern(1624277222886);
     setPalette(1624275666283);
-    setBrightness(0.6);
+    setBrightness(1.0);
     setSpeed(0.2);
     resetTimer();
   }
 
   function setWarning(){
     setPattern(1628856045832);
-    setBrightness(0.6);
+    setBrightness(1.0);
     setSpeed(0.27);
     resetTimer();
   }
@@ -210,7 +211,7 @@
     }
   }
 
-  function resetTimer(){
+  function sync(){
     for (let i=0; i<endpoints.length;i++) {
       const ip = endpoints[i]
       fetch(`${ip}/resettimer`)
@@ -226,7 +227,7 @@
       fetch(`${ip}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SlowPulsePalette"}`)
       .then((response) => {
         setSpeed(0.2)
-        setBrightness(0.8);
+        setBrightness(1.0);
       })
     }
   }
