@@ -29,7 +29,10 @@
     }
 
     button {
-      width: 90%;
+      width: 40%;
+      border: 10px solid red;
+      /* display: inline; */
+      display: inline-block;
       padding: 0.5rem;
       font-size: 1.5rem;
       background-color: white;
@@ -48,7 +51,7 @@
     }
 
     .button-container button {
-      width: 90%;
+      width: 40%;
       display: inline-block;
       margin-bottom: 1rem;
     }
@@ -81,6 +84,10 @@
       color: white;
     }
 
+    h1 {
+      color: white;
+    }
+
   </style>
 </head>
 <body>
@@ -90,13 +97,27 @@
     </div>
   </div>
   <div class="button-container">
-    <button onclick="setJellyfish(0.05)"><i class="fa-solid fa-spaghetti-monster-flying"></i> Jellyfish Slow</button>
-    <button onclick="setJellyfish(0.2)"><i class="fa-solid fa-spaghetti-monster-flying"></i> Jellyfish Normal</button>
-    <button class="glow-color-preview" onclick="sendColor(0.2)"><i class="fas fa-adjust"></i> Glow Slow</button>
-    <button class="glow-color-preview" onclick="sendColor(0.4)"><i class="fas fa-adjust"></i> Glow Fast</button>
-    <button onclick="setStrobe(1.0)"><i class="fas fa-bahai"></i> Strobe Slow</button>
-    <button onclick="setStrobe(1.5)"><i class="fas fa-bahai"></i> Strobe Fast</button>
-  </div>
+    <div>
+      <div>
+        <h1><i class="fa-solid fa-spaghetti-monster-flying"></i> Jellyfish Slow</h1>
+        <button onclick="setJellyfish(0.05)">slow</button>
+        <button onclick="setJellyfish(0.2)">fast</button>
+      </div>
+    </div>
+
+    <div>
+      <h1><i class="fas fa-adjust"></i> Glow</h1>
+      <button class="glow-color-preview" onclick="sendColor(0.2)">Slow</button>
+      <button class="glow-color-preview" onclick="sendColor(0.4)">Fast</button>
+    </div>
+
+    <div>
+      <h1><i class="fas fa-bahai"></i> Strobe</h1>
+      <button onclick="setStrobe(1.0)">Slow</button>
+      <button onclick="setStrobe(1.5)">Fast</button>
+    </div>
+
+    </div>
   <div id="color-picker"></div>
 
   <script src="static/js/iro.min.js"></script>
