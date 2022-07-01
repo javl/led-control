@@ -107,8 +107,8 @@
     <div>
       <div>
         <h1><i class="fa-solid fa-spaghetti-monster-flying"></i> Jellyfish</h1>
-        <button onclick="setJellyfish(0.05)">slow</button>
-        <button onclick="setJellyfish(0.2)">fast</button>
+        <button onclick="setJellyfishSlow(0.07, 2.75)">slow</button>
+        <button onclick="setJellyfish(0.2, 1.0)">fast</button>
       </div>
     </div>
 
@@ -185,13 +185,24 @@
     setPattern(1624276202155);
     setBrightness(1.0);
     setSpeed(speed);
+    setScale(1.0);
     resetTimer();
   }
 
-  function setJellyfish(speed){
-    setPattern(1624277222886);
-    setPalette(1624275666283);
+  function setJellyfishSlow(speed, scale){
+    setPattern(1624277222887);
+    setPalette(1624275666284);
     setBrightness(1.0);
+    setScale(scale);
+    setSpeed(speed);
+    resetTimer();
+  }
+
+  function setJellyfish(speed, scale){
+    setPattern(1624277222886);
+    setPalette(1624275666285);
+    setBrightness(1.0);
+    setScale(scale);
     setSpeed(speed);
     resetTimer();
   }
@@ -200,6 +211,7 @@
     setPattern(1628856045832);
     setBrightness(1.0);
     setSpeed(0.27);
+    setScale(1.0);
     resetTimer();
   }
 
@@ -213,6 +225,7 @@
       .then((response) => {
         setSpeed(speed)
         setBrightness(1.0);
+        setScale(1.0);
       })
     }
   }
@@ -242,6 +255,13 @@
     for (let i=0; i<endpoints.length;i++) {
       const ip = endpoints[i]
       fetch(`${ip}/setparam?key=primary_speed&value=${value}`)
+    }
+ }
+
+ function setScale(value) {
+    for (let i=0; i<endpoints.length;i++) {
+      const ip = endpoints[i]
+      fetch(`${ip}/setparam?key=primary_scale&value=${value}`)
     }
  }
 
