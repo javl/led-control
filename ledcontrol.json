@@ -131,12 +131,12 @@
         "1624449450971": {
             "colors": [
                 [
-                    0.9611111111111111,
+                    0.9222222222222223,
                     1,
                     0.5
                 ],
                 [
-                    0.9611111111111111,
+                    0.9222222222222223,
                     1,
                     0.5
                 ]
@@ -146,14 +146,15 @@
         }
     },
     "params": {
-        "brightness": 0.6,
+        "brightness": 1.0,
         "color_temp": 5800,
         "direct_control_mode": 0,
         "gamma": 1.0,
         "palette": 1624275666283,
-        "primary_pattern": 1628856045832,
+        "primary_pattern": 1624277222886,
         "primary_scale": 1.0,
-        "primary_speed": 0.16,
+        "primary_speed": 0.2,
+        "sacn": 0,
         "saturation": 1.0,
         "secondary_pattern": 0,
         "secondary_scale": 1.0,
@@ -162,11 +163,15 @@
     "patterns": {
         "0": {
             "primary_scale": 1.0,
-            "primary_speed": 1.09
+            "primary_speed": 0.2
         },
         "1": {
             "primary_scale": 1.0,
             "primary_speed": 1.0
+        },
+        "2": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.0
         },
         "10": {
             "primary_scale": 1.0,
@@ -184,39 +189,11 @@
             "primary_scale": 1.0,
             "primary_speed": 0.2
         },
-        "32": {
-            "primary_scale": 1.0,
-            "primary_speed": 0.2
-        },
-        "33": {
-            "primary_scale": 1.0,
-            "primary_speed": 0.2
-        },
         "40": {
             "primary_scale": 1.0,
             "primary_speed": 0.2
         },
         "50": {
-            "primary_scale": 1.0,
-            "primary_speed": 0.2
-        },
-        "60": {
-            "primary_scale": 1.0,
-            "primary_speed": 0.2
-        },
-        "70": {
-            "primary_scale": 1.0,
-            "primary_speed": 0.2
-        },
-        "71": {
-            "primary_scale": 1.0,
-            "primary_speed": 0.2
-        },
-        "80": {
-            "primary_scale": 1.0,
-            "primary_speed": 0.2
-        },
-        "90": {
             "primary_scale": 1.0,
             "primary_speed": 0.2
         },
@@ -232,19 +209,71 @@
             "primary_scale": 1.0,
             "primary_speed": 0.2
         },
-        "121": {
-            "primary_scale": 1.0,
-            "primary_speed": 0.2
-        },
         "130": {
             "primary_scale": 1.0,
             "primary_speed": 0.2
         },
-        "131": {
+        "140": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.1
+        },
+        "141": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.1
+        },
+        "150": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.05
+        },
+        "160": {
             "primary_scale": 1.0,
             "primary_speed": 0.2
         },
-        "140": {
+        "161": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "170": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "180": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "190": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "200": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.3
+        },
+        "300": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "310": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "320": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "330": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "340": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "350": {
+            "primary_scale": 1.0,
+            "primary_speed": 0.2
+        },
+        "360": {
             "primary_scale": 1.0,
             "primary_speed": 0.2
         },
@@ -252,31 +281,31 @@
             "name": "Cycle Palette 1D (Copy)",
             "primary_scale": 1.0,
             "primary_speed": 0.2,
-            "source": "def pattern(t, dt, x, y, prev_state):\n    return palette(t + x), hsv"
+            "source": "def pattern(t, dt, x, y, z, prev_state):\n    return palette(t + x), hsv"
         },
         "1624276202155": {
             "name": "Strobe",
             "primary_scale": 1.0,
             "primary_speed": 1.0,
-            "source": "def pattern(t, dt, x, y,prev_state):\n    t = t % 1\n    temp = ((t * 16 ) % 16) % 2\n    return (0, 0, temp >= 1.0), hsv"
+            "source": "def pattern(t, dt, x, y, z, prev_state):\n    t = t % 1\n    temp = ((t * 16 ) % 16) % 2\n    return (0, 0, temp >= 1.0), hsv"
         },
         "1624277222886": {
             "name": "JellyfishPattern",
             "primary_scale": 1.0,
             "primary_speed": 0.2,
-            "source": "def pattern(t, dt, x, y, prev_state):\n    return palette(t+x), hsv"
+            "source": "def pattern(t, dt, x, y, z, prev_state):\n    return palette(t+x), hsv"
         },
         "1624446887029": {
             "name": "SlowPulse",
             "primary_scale": 1.0,
             "primary_speed": 0.2,
-            "source": "def pattern(t, dt, x, y, prev_state):\n    return (palette(0)[0], palette(0)[1], wave_sine(t)), hsv"
+            "source": "def pattern(t, dt, x, y, z, prev_state):\n    return (palette(0)[0], palette(0)[1], wave_sine(t)), hsv"
         },
         "1628856045832": {
             "name": "WarningPattern",
             "primary_scale": 1.0,
-            "primary_speed": 0.16,
-            "source": "def pattern(t, dt, x, y,prev_state):\n    t = t % 1\n\n    temp = ((t * 24 ) % 24) % 2\n    if t > 0.25:\n        temp = 0\n    return (0, 1, temp >= 1.0), hsv"
+            "primary_speed": 0.27,
+            "source": "def pattern(t, dt, x, y, z, prev_state):\n    t = t % 1\n\n    temp = ((t * 24 ) % 24) % 2\n    if t > 0.25:\n        temp = 0\n    return (0, 1, temp >= 1.0), hsv"
         }
     }
 }
