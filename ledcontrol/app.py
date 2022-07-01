@@ -144,7 +144,16 @@ def create_app(led_count,
         for item in form:
             if (item.key in controller.params):
                 item.val = item.type(controller.params[item.key])
-        return render_template('simple-control.html',
+        return render_template('simple-control-public.html',
+                               form=form)
+
+    @app.route('/bambi-control')
+    def get_control_bambi():
+        'Returns a simpler HTML controller page'
+        for item in form:
+            if (item.key in controller.params):
+                item.val = item.type(controller.params[item.key])
+        return render_template('simple-control-bambi.html',
                                form=form)
 
     @app.route('/ping')
@@ -152,7 +161,7 @@ def create_app(led_count,
         'Simple check to see if server is online'
         return "pong"
 
-    @app.route('/setup')
+    @app.route('/pattern-setup')
     def get_setup():
         'Returns web app page'
         for item in form:
@@ -161,13 +170,13 @@ def create_app(led_count,
         return render_template('setup.html',
                                form=form)
 
-    @app.route('/shutdown')
+    @app.route('/_shutdown')
     def get_shutdown():
         'Shutdown the RPi'
         os.system('sudo shutdown -h now')
         return "Shutting down"
 
-    @app.route('/update')
+    @app.route('/_update')
     def get_update():
         'Pull the latest code from git'
         os.system('sudo -u pi git -C /home/pi/led-control pull origin artur; sleep 2; sudo reboot')

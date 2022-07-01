@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LED Control</title>
+
+  <link rel="apple-touch-icon" sizes="152x152" href="static/apple-touch-icon.png?v=1">
+  <link rel="icon" type="image/png" sizes="32x32" href="static/favicon-32x32.png?v=1">
+  <link rel="icon" type="image/png" sizes="16x16" href="static/favicon-16x16.png?v=1">
+  <link rel="manifest" href="static/site.webmanifest?v=1">
+  <link rel="mask-icon" href="static/safari-pinned-tab.svg?v=1" color="#5bbad5">
+  <link rel="shortcut icon" href="static/favicon.ico?v=1">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+
+  <link href="static/font-awesome-6-main/css/all.min.css" rel="stylesheet" />
+  <style type="text/css">
+   html,
+   body {
+     width: 100%;
+     padding: 0;
+     margin: 0;
+     text-align: center;
+     background-color: black;
+     font-family: Verdana, Geneva, Tahoma, sans-serif;
+    }
+
+    button {
+      width: 90%;
+      padding: 0.5rem;
+      font-size: 1.5rem;
+      background-color: white;
+      border: none;
+      border-radius: 4px;
+    }
+
+    #color-picker {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .button-container {
+      margin-bottom: 1rem;
+    }
+
+    .button-container button {
+      width: 90%;
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+
+    .maintenance-buttons {
+      margin-top: 500px;
+    }
+
+    .maintenance-btn {
+      margin-top: 1rem;
+      width: auto;
+    }
+
+    .update-msg {
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      color: white;
+      position: absolute;
+      left: 0;
+      top: 0;
+      display: none;
+      text-align: center;
+      font-size: 2rem;
+      padding-top: 200px;
+    }
+
+    .connected-msg {
+      margin-top: 1rem;
+      color: white;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="update-msg">
+    <div class="msg">
+      Looking for updates<br>and rebooting...
+    </div>
+  </div>
+  <div class="button-container">
+    <button onclick="setJellyfish(0.1)"><i class="fa-solid fa-spaghetti-monster-flying"></i> Jellyfish Slow</button>
+    <button onclick="setJellyfish(0.2)"><i class="fa-solid fa-spaghetti-monster-flying"></i> Jellyfish Normal</button>
+    <button id="color-preview" onclick="sendColor(0.2)"><i class="fas fa-adjust"></i>Glow Slow</button>
+    <button id="color-preview" onclick="sendColor(0.4)"><i class="fas fa-adjust"></i>Glow Fast</button>
+    <button onclick="setStrobe(1.0)"><i class="fas fa-bahai"></i> Strobe Slow</button>
+    <button onclick="setStrobe(1.5)"><i class="fas fa-bahai"></i> Strobe Fast</button>
+  </div>
+  <div id="color-picker"></div>
+
+  <script src="static/js/iro.min.js"></script>
+
+  <script>
+  const endpoints = [
+    'http://192.168.1.201',
+    'http://192.168.1.202',
+    'http://192.168.1.203',
+    'http://192.168.1.204',
+    'http://192.168.1.205',
+  ];
+  // let connected = false;
+  // function checkIfOnline() {
+  //   fetch(`${endpoint}/ping`)
+  //   .then((response) => {
+  //     if (response.status === 200) {
+  //       connected = true;
+  //       document.querySelector('.connected-msg').innerHTML = 'connected';
+  //     } else {
+  //       connected = false;
+  //       document.querySelector('.connected-msg').innerHTML = 'disconnected';
+  //     }
+  //   })
+  //   .catch((error) => {
+  //     connected = false;
+  //     document.querySelector('.connected-msg').innerHTML = 'disconnected';
+  //   });
+  // }
+  // setInterval(() => {
+  //   checkIfOnline();
+  // }, 5000);
+  // checkIfOnline();
+
+  let hsl = {
+    h: 0,
+    s: 0,
+    l: 0
+  };
+
+  const colorPicker = new iro.ColorPicker("#color-picker", {
+    width: 320,
+    color: "#f00"
+  });
+
+  colorPicker.on('color:change', function(color) {
+    hsl.h = color.hsl.h / 360.0;
+    hsl.s = color.hsl.s /100.0;
+    hsl.l = color.hsl.l /100.0;
+    document.querySelector('#color-preview').style.backgroundColor = color.rgbaString;
+  });
+
+  function setStrobe(speed){
+    setPattern(1624276202155);
+    setBrightness(1.0);
+    setSpeed(speed);
+    resetTimer();
+  }
+
+  function setJellyfish(speed){
+    setPattern(1624277222886);
+    setPalette(1624275666283);
+    setBrightness(1.0);
+    setSpeed(speed);
+    resetTimer();
+  }
+
+  function setWarning(){
+    setPattern(1628856045832);
+    setBrightness(1.0);
+    setSpeed(0.27);
+    resetTimer();
+  }
+
+  function sendColor(speed) {
+    setPattern(1624446887029);
+    const paletteId = 1624449450971;
+    setPalette(paletteId);
+    for (let i=0; i<endpoints.length;i++) {
+      const ip = endpoints[i]
+      fetch(`${ip}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SlowPulsePalette"}`)
+      .then((response) => {
+        setSpeed(speed)
+        setBrightness(1.0);
+      })
+    }
+  }
+
+  function setPattern(value) {
+    for (let i=0; i<endpoints.length;i++) {
+      const ip = endpoints[i]
+      fetch(`${ip}/setparam?key=primary_pattern&value=${value}`)
+    }
+  }
+
+  function setPalette(value) {
+    for (let i=0; i<endpoints.length;i++) {
+      const ip = endpoints[i]
+      fetch(`${ip}/setparam?key=palette&value=${value}`)
+    }
+  }
+
+  function setBrightness(value) {
+    for (let i=0; i<endpoints.length;i++) {
+      const ip = endpoints[i]
+      fetch(`${ip}/setparam?key=brightness&value=${value}`)
+     }
+  }
+
+  function setSpeed(value) {
+    for (let i=0; i<endpoints.length;i++) {
+      const ip = endpoints[i]
+      fetch(`${ip}/setparam?key=primary_speed&value=${value}`)
+    }
+ }
+
+  </script>
+</body>
+</html>

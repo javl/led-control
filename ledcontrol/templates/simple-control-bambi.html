@@ -180,21 +180,11 @@
       setBrightness(0.0);
       for (let i=0; i<endpoints.length;i++) {
         const ip = endpoints[i]
-        setTimeout(() => fetch(`${ip}/shutdown`), 500);
+        setTimeout(() => fetch(`${ip}/_shutdown`), 500);
       }
     }
   }
 
-  // let checkServerInterval = null;
-  // function checkIfServerBack() {
-  //   fetch(`${endpoint}/ping`)
-  //   .then((response) => {
-  //     if (response.status === 200) {
-  //       clearInterval(checkServerInterval);
-  //       window.location.reload(true);
-  //     }
-  //   })
-  // }
   function update() {
     if (confirm('Do you want to check for new code and reboot?')) {
       document.querySelector('.update-msg').style.display = 'block';
@@ -202,7 +192,7 @@
       document.querySelector('#color-picker').style.display = 'none';
       for (let i=0; i<endpoints.length;i++) {
         const ip = endpoints[i]
-        fetch(`${ip}/update`)
+        fetch(`${ip}/_update`)
       }
       checkServerInterval = setInterval(() => {
         checkIfServerBack();
