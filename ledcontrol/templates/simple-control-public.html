@@ -120,8 +120,8 @@
 
     <div>
       <h1><i class="fas fa-bahai"></i> Strobe</h1>
-      <button onclick="setStrobe(1.0)">Slow</button>
-      <button onclick="setStrobe(1.5)">Fast</button>
+      <button onclick="setStrobe(1.0, 0.4)">Slow</button>
+      <button onclick="setStrobe(1.5, 1.0)">Fast</button>
     </div>
 
     <h2>Glow color</h2>
@@ -183,9 +183,9 @@
     });
   });
 
-  function setStrobe(speed){
+  function setStrobe(speed, brightness){
     setPattern(1624276202155);
-    setBrightness(1.0);
+    setBrightness(brightness);
     setSpeed(speed);
     setScale(1.0);
     resetTimer();
