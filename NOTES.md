@@ -57,7 +57,7 @@ Open `wpa_supplicant.conf` and enter the following (replace PASSWORD with the ac
     pi ALL=(ALL) NOPASSWD: /sbin/reboot, /sbin/shutdown
     root ALL=(ALL) NOPASSWD: /sbin/reboot, /sbin/shutdown
 ```
-18. Copy our ledcontrol patterns to the right spot: `cp ledcontrol.json /etc/ledcontrol.json`
+18. Our ledcontrol patterns should go in `/etc/ledcontrol.json`, but for ease of use we'll symlink to our repo: `sudo ln -s /home/pi/led-control/ledcontrol.json ledcontrol.json`
 19. Just reboot once more to finish: `sudo reboot`
 
 ## Hardware:
