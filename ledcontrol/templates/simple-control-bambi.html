@@ -94,6 +94,8 @@
     <button onclick="setJellyfish()"><i class="fa-solid fa-spaghetti-monster-flying"></i> Jellyfish</button>
     <button onclick="setWarning()"><i class="fa-solid fa-warning"></i> Warning</button>
     <button onclick="sync()">Sync</button>
+    <button onclick="startSequence()">Start sequence Dresden</button>
+    <button onclick="stopSequence()">Stop sequence Dresden</button>
   </div>
   <div id="color-picker"></div>
   <button id="color-preview" onclick="sendColor()"><i class="fas fa-adjust"></i> Set Glow</button>
@@ -137,6 +139,24 @@
   //   checkIfOnline();
   // }, 5000);
   // checkIfOnline();
+  
+  var currentEffect = 1;
+  var previousEffect = 0;
+  var sequenceTimerVar = 0;
+  var sequenceTime = 0;
+  // 0-90: Jellyfish fast
+  // 90-180: Glow pink
+  // 180-210: Glow fast rood
+  // 210-450: Strobe slow
+  // 450-510: Jellyfish slow
+  // 
+  var sequenceDict = {};
+  
+  sequenceDict[5] = 1;
+  sequenceDict[10] = 3;
+  sequenceDict[15] = 4;
+  sequenceDict[20] = 5;
+  sequenceDict[25] = 2;
 
   let hsl = {
     h: 0,
@@ -155,22 +175,108 @@
     hsl.l = color.hsl.l /100.0;
     document.querySelector('#color-preview').style.backgroundColor = color.rgbaString;
   });
+  
+  function startSequence(){
+	sequenceTime=0;
+	sequenceTimerVar = setInterval(setNextEffect, 1000);
+  }
+  
+  function stopSequence(){
+	console.log("stopSequence, sequenceTimerVar" + sequenceTimerVar);
+
+	if(sequenceTimerVar!=0){
+		clearInterval(sequenceTimerVar)
+	}
+  }
+  
+  function setNextEffect(){
+	sequenceTime++;
+	console.log("currentEffect:" + currentEffect + "sequenceTime:" + sequenceTime);
+	if(sequenceTime in sequenceDict){
+		currentEffect = sequenceDict[sequenceTime];
+	}
+	console.log("currentEffect:" + currentEffect + "sequenceTime:" + sequenceTime);
+	
+	if(currentEffect!=previousEffect){
+		if(currentEffect==1){
+			setJellyfish(0.1, -2.0);
+		}else if(currentEffect==2){
+			setJellyfishSlow(0.07, -2.75);
+		}else if(currentEffect==3){
+			sendColor(0.2);
+		}else if(currentEffect==4){
+			sendColor(0.4);
+		}else if(currentEffect==5){
+			setStrobe(1.0, 0.4);
+		}
+		previousEffect=currentEffect;
+	}
+	
+	if(sequenceTime>30){
+		sequenceTime=0;
+		stopSequence();
+	}
+	
+//	if(currentEffect>2){
+//		currentEffect=1;
+//	}else{
+//		currentEffect++;	
+//	}
+  }
+  
+
+  function setStrobe(speed, brightness){
+    setPattern(1624276202155);
+    setBrightness(brightness);
+    setSpeed(speed);
+    setScale(1.0);
+  }
+  
+  function sendColor(speed) {
+    setPattern(1624446887029);
+    const paletteId = 1624449450971;
+    setPalette(paletteId);
+    for (let i=0; i<endpoints.length;i++) {
+      const ip = endpoints[i]
+      fetch(`${ip}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SlowPulsePalette"}`)
+      .then((response) => {
+        setSpeed(speed)
+        setBrightness(1.0);
+        setScale(1.0);
+      })
+    }
+  }
 
   function setStrobe(){
     setPattern(1624276202155);
     setBrightness(1.0);
     setSpeed(1.0);
-    resetTimer();
   }
 
-  function setJellyfish(){
+  function setStrobe(speed, brightness){
+    setPattern(1624276202155);
+    setBrightness(brightness);
+    setSpeed(speed);
+    setScale(1.0);
+  }
+
+  function setJellyfishSlow(speed, scale){
+    setPattern(1624277222887);
+    setPalette(1624275666284);
+    setBrightness(1.0);
+    setScale(scale);
+    setSpeed(speed);
+  }
+  
+
+  function setJellyfish(speed, scale){
     setPattern(1624277222886);
     setPalette(1624275666283);
     setBrightness(1.0);
-    setSpeed(0.2);
-    resetTimer();
+    setScale(scale);
+    setSpeed(speed);
   }
-
+  
   function setWarning(){
     setPattern(1628856045832);
     setBrightness(1.0);
@@ -225,6 +331,7 @@
     }
   }
 
+
   function setPattern(value) {
     for (let i=0; i<endpoints.length;i++) {
       const ip = endpoints[i]
@@ -250,6 +357,13 @@
     for (let i=0; i<endpoints.length;i++) {
       const ip = endpoints[i]
       fetch(`${ip}/setparam?key=primary_speed&value=${value}`)
+    }
+ }
+
+ function setScale(value) {
+    for (let i=0; i<endpoints.length;i++) {
+      const ip = endpoints[i]
+      fetch(`${ip}/setparam?key=primary_scale&value=${value}`)
     }
  }
 
