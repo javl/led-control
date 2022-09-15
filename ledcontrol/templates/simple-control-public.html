@@ -82,16 +82,9 @@
             width: 100%; /* Width of the outside container */
         }
 
-        /* The slider itself */
         .slider {
-            /*-webkit-appearance: none;  !* Override default CSS styles *!*/
-            /*appearance: none;*/
             width: 80%; /* Full-width */
             height: 25px; /* Specified height */
-            /*outline: none; !* Remove outline *!*/
-            /*opacity: 0.7; !* Set transparency (for mouse-over effects on hover) *!*/
-            /*-webkit-transition: .2s; !* 0.2 seconds transition on hover *!*/
-            /*transition: opacity .2s;*/
         }
 
         .connected-msg {
@@ -120,6 +113,7 @@
     </div>
 </div>
 <div class="button-container">
+    <!--    Jelly Fish-->
     <div>
         <div>
             <h1><i class="fa-solid fa-spaghetti-monster-flying"></i> Jellyfish</h1>
@@ -128,36 +122,39 @@
         </div>
     </div>
 
+    <!--    Glow-->
     <div>
         <h1><i class="fas fa-adjust"></i> Glow</h1>
         <button class="glow-color-preview" onclick="sendColor(0.2)">Sine</button>
         <button class="glow-color-preview" onclick="setWaveTriangle(0.2)">Triangle</button>
     </div>
 
+    <!--    Strobe-->
     <div>
         <h1><i class="fas fa-bahai"></i> Strobe</h1>
         <button onclick="setStrobe(1.0, 0.4)">Slow</button>
         <button onclick="setStrobe(1.5, 1.0)">Fast</button>
     </div>
 
-
+    <!--    Static color and Off-->
     <div>
         <h1><i class="fas fa-bahai"></i> Color</h1>
         <button onclick="setStaticColor()">Static color</button>
         <button onclick="setLEDsOff()">LEDs off</button>
     </div>
-
-    <!--    <h2>Glow color</h2>-->
 </div>
 
+<!--Color Picker-->
 <div id="color-picker"></div>
 
+<!--Brightness Slider-->
 <div class="slidecontainer">
     <h1><i class="msg" id="mySliderOutputBrightness">Brightness: 0.40</i></h1>
     <input type="range" min="1" max="100" value="2" class="slider" id="mySliderBrightness">
     <!--    <h1><i class="msg" id="mySliderOutputBrightness">0.40</i> </h1>-->
 </div>
 
+<!--Speed Slider-->
 <div class="slidecontainer">
     <h1><i class="msg" id="mySpeedSliderOutput">Speed: 0.20</i></h1>
     <input type="range" min="1" max="150" value="2" class="slider" id="mySpeedSlider">
@@ -201,8 +198,7 @@
     let hsl = {
         h: 0,
         s: 0,
-        l: 0,
-        a: 0.0
+        l: 0
     };
 
 
@@ -215,8 +211,6 @@
         hsl.h = color.hsl.h / 360.0;
         hsl.s = color.hsl.s / 100.0;
         hsl.l = color.hsl.l / 100.0;
-        hsl.a = color.hsla.a * 100.0;
-        console.log("brightness: " + hsl.a);
         document.querySelectorAll('.glow-color-preview').forEach(el => {
             el.style.backgroundColor = color.rgbaString;
         });
@@ -229,6 +223,7 @@
 
     });
 
+    // Sliders:
     var slider = document.getElementById("mySpeedSlider");
     var output = document.getElementById("mySpeedSliderOutput");
     output.innerHTML = "Speed: " + slider.value / 100; // Display the default slider value
@@ -368,9 +363,6 @@
             const ip = endpoints[i]
             fetch(`${ip}/setparam?key=primary_speed&value=${value}`)
         }
-        // if((value * 100) != slider.value){
-        //   slider.value = value * 100;
-        // }
     }
 
     function setScale(value) {
