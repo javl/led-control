@@ -156,6 +156,15 @@ def create_app(led_count,
         return render_template('simple-control-bambi.html',
                                form=form)
 
+    @app.route('/dream-chapel')
+    def get_control_helmond():
+        'Returns a simpler HTML controller page'
+        for item in form:
+            if (item.key in controller.params):
+                item.val = item.type(controller.params[item.key])
+        return render_template('simple-control-dream-chapel.html',
+                               form=form)
+
     @app.route('/ping')
     def get_ping():
         'Simple check to see if server is online'
