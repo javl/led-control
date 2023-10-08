@@ -225,6 +225,7 @@ def create_app(led_count,
         'Sets a key/value pair in controller parameters'
         key = request.args.get('key', type=str)
         value = request.args.get('value')
+        logger.info(f"/setparam key: {key}, value: {value}")
         form_item = next(filter(lambda i: i.key == key, form))
         if key == 'primary_pattern':
             save_current_pattern_params()
