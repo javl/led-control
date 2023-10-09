@@ -98,7 +98,8 @@
 
 <button onclick="startDreamChapelSequence()" id="buttonStart"><i class="far fa-play"></i> Start</button>
 
-<button onclick="stopDreamChapelSequence()" style="display: none;" id="buttonStop"><i class="far fa-stop"></i> Stop</button>
+<button onclick="stopDreamChapelSequence()" style="display: none;" id="buttonStop"><i class="far fa-stop"></i> Stop
+</button>
 <br><br>
 <br><br>
 
@@ -134,6 +135,7 @@
     var sequenceTimerVar = 0;
     var sequenceTime = 0;
     var music_timer = 0.0;
+    var colorSequenceTimerVar = 0;
 
     // 0-90: Jellyfish fast
     // 90-180: Glow pink
@@ -173,6 +175,35 @@
     // 0.8777777777777778
     // 0.7583333333333333
 
+    var colorCounter = 1;
+    var colorSequenceDict = {};
+    colorSequenceDict[1] = 0.7805555555555556;
+    colorSequenceDict[2] = 0.7194444444444444;
+    colorSequenceDict[3] = 0.675;
+    colorSequenceDict[4] = 0.6277777777777778;
+    colorSequenceDict[5] = 0.7638888888888888;
+    colorSequenceDict[6] = 0.8111111111111111;
+    colorSequenceDict[7] = 0.8527777777777777;
+    colorSequenceDict[8] = 0.9083333333333333;
+    colorSequenceDict[9] = 0.9555555555555556;
+    colorSequenceDict[10] = 0.8777777777777778;
+    colorSequenceDict[11] = 0.7583333333333333;
+
+    function setNextColor() {
+        hsl.h = colorSequenceDict[colorCounter];
+        paletteId = 1624449450971;
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SolidColor"}`)
+        }
+
+        console.log("hsl.h:" + hsl.h);
+        colorCounter++;
+        if (colorCounter > 11) {
+            colorCounter = 1;
+        }
+    }
+
     function setNextEffect() {
         let sequenceTime = Math.floor(music_timer);
 
@@ -193,7 +224,6 @@
                 // Fontein Licht Fade uit.
                 setJellyfishSlow(0.03, -2.75);
                 // setFountain(1);
-                console.log("setJellyfishSlow(0.03, -2.75);")
             } else if (currentEffect === 3) {
                 // Jelliy Fish Fast
                 // Fontein aan
@@ -211,8 +241,6 @@
                 hsl.h = 0.6444444444444445;
                 hsl.s = 1;
                 hsl.l = 0.5;
-                console.log("sendColor(0.1);")
-                console.log("sendColor(0.1);")
                 sendColor(0.05, 0.001);
                 setFountainArduino(2);
             } else if (currentEffect === 5) {
@@ -222,8 +250,7 @@
                 hsl.h = 0.7944444444444444;
                 hsl.s = 1;
                 hsl.l = 0.5;
-                console.log("sendColor(0.1);")
-                console.log("sendColor(0.1);")
+                startColorSequence();
                 sendColor(0.05, 0.001);
                 setFountainArduino(2);
             } else if (currentEffect === 6) {
@@ -233,8 +260,6 @@
                 hsl.h = 0.8611111111111112;
                 hsl.s = 1;
                 hsl.l = 0.5;
-                console.log("sendColor(0.1);")
-                console.log("sendColor(0.1);")
                 sendColor(0.1);
                 setBrightness(0.001);
                 setFountainArduino(2);
@@ -245,8 +270,6 @@
                 hsl.h = 0.8611111111111112;
                 hsl.s = 1;
                 hsl.l = 0.5;
-                console.log("sendColor(0.1);")
-                console.log("sendColor(0.1);")
                 sendColor(0.1);
                 setBrightness(0.1);
                 setFountainArduino(2);
@@ -254,8 +277,8 @@
                 // jelly fish slow
                 // Fontein uit
                 // Fontein Licht uit.
+                stopColorSequence();
                 setJellyfishSlow(0.07, -2.75);
-                console.log("setJellyfishSlow(0.07, -2.75);")
                 setFountainArduino(2);
             } else if (currentEffect === 9) {
                 // Licht uit
@@ -269,7 +292,10 @@
                 // Fontein uit
                 // Fontein Licht uit.
 
-                setStrobe(12, 0.4);
+                hsl.h = 0.92222222222222222222;
+                hsl.s = 1;
+                hsl.l = 1;
+                setStrobeColored(0.35, 0.1);
                 setFountainArduino(2);
             } else if (currentEffect === 11) {
                 // Jelliy Fish Fast
@@ -299,8 +325,6 @@
                 hsl.h = 0.008333333333333333;
                 hsl.s = 1;
                 hsl.l = 0.5;
-                console.log("sendColor(0.1);")
-                console.log("sendColor(0.1);")
                 sendColor(0.001);
                 setBrightness(0.001);
                 enableFountain(true);
@@ -311,8 +335,6 @@
                 hsl.h = 0.058333333333333334;
                 hsl.s = 1;
                 hsl.l = 0.5;
-                console.log("sendColor(0.1);")
-                console.log("sendColor(0.1);")
                 sendColor(0.001);
                 setBrightness(0.001);
                 enableFountain(true);
@@ -340,7 +362,7 @@
         var currentTime = audioplayerglobal.currentTime;
         var currentTimeSeconds = Math.floor(audioplayerglobal.currentTime);
         var duration = audioplayerglobal.duration;
-        if(currentTimeSeconds>previousTimeSeconds){
+        if (currentTimeSeconds !== previousTimeSeconds) {
             previousTimeSeconds = currentTimeSeconds;
             console.log("currentTimeSeconds:" + currentTimeSeconds + ", duration:" + duration);
 
@@ -400,6 +422,18 @@
         // setBrightness(0)
     }
 
+    function startColorSequence(){
+        colorSequenceTimerVar = setInterval(setNextColor, 12500);
+    }
+
+    function stopColorSequence(){
+        console.log("stopSequence, sequenceTimerVar" + colorSequenceTimerVar);
+
+        if (colorSequenceTimerVar != 0) {
+            clearInterval(colorSequenceTimerVar)
+        }
+    }
+
 
     // if (sequenceTime > 90) {
     //     // stopSequence();
@@ -435,6 +469,23 @@
         setBrightness(brightness);
         setSpeed(speed);
         setScale(1.0);
+    }
+
+    function setStrobeColored(speed, brightness) {
+        console.log("setStrobeColored(speed=" + speed + ", brightness=" + brightness + ")");
+        const paletteId = 1624449450971;
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"StrobeColored"}`)
+                .then((response) => {
+                    setSpeed(speed)
+                    setBrightness(brightness);
+                    setScale(1.0);
+                })
+        }
+        setPattern(1696875330311);
+
+
     }
 
     function sendColor(speed, brightness) {
