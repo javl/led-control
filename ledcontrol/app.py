@@ -176,6 +176,8 @@ def create_app(led_count,
             logger.info("{}: {} [{}]".format(port, desc, hwid))
             if port == '/dev/ttyACM0':
                 chapel_serial.connect_serial(port)
+            elif port == '/dev/ttyACM1':
+                chapel_serial.connect_serial(port)
 
         return render_template('simple-control-dream-chapel.html',
                                form=form)
