@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LED Control</title>
+
+    <link rel="apple-touch-icon" sizes="152x152" href="static/apple-touch-icon.png?v=1">
+    <link rel="icon" type="image/png" sizes="32x32" href="static/favicon-32x32.png?v=1">
+    <link rel="icon" type="image/png" sizes="16x16" href="static/favicon-16x16.png?v=1">
+    <link rel="manifest" href="static/site.webmanifest?v=1">
+    <link rel="mask-icon" href="static/safari-pinned-tab.svg?v=1" color="#5bbad5">
+    <link rel="shortcut icon" href="static/favicon.ico?v=1">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+    <link href="static/font-awesome-6-main/css/all.min.css" rel="stylesheet"/>
+    <style type="text/css">
+        html,
+        body {
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+            background-color: black;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        button {
+            width: 90%;
+            padding: 0.5rem;
+            font-size: 1.5rem;
+            background-color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        #color-picker {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .button-container {
+            margin-bottom: 1rem;
+        }
+
+        .button-container button {
+            width: 90%;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .maintenance-buttons {
+            margin-top: 500px;
+        }
+
+        .maintenance-btn {
+            margin-top: 1rem;
+            width: auto;
+        }
+
+        .update-msg {
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            color: white;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: none;
+            text-align: center;
+            font-size: 2rem;
+            padding-top: 200px;
+        }
+
+        .connected-msg {
+            margin-top: 1rem;
+            color: white;
+        }
+
+        audio {
+            width: 90%;
+        }
+
+    </style>
+</head>
+<body>
+<div class="update-msg">
+    <div class="msg">
+        Looking for updates<br>and rebooting...
+    </div>
+</div>
+
+<br><br>
+<br><br>
+
+<button onclick="startDreamChapelSequence()" id="buttonStart"><i class="far fa-play"></i> Start</button>
+
+<button onclick="stopDreamChapelSequence()" style="display: none;" id="buttonStop"><i class="far fa-stop"></i> Stop
+</button>
+<br><br>
+<br><br>
+
+<audio controls id="myAudio">
+    <source src="static/dreaming/Dreaming_release1_2.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+
+<br>
+<br>
+
+<audio controls loop id="myAudioDreamingLoop">
+    <source src="static/dreaming/Intro_Dreaming_Loop_1_1.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+
+
+<script src="static/js/iro.min.js"></script>
+
+<script>
+    const endpoints = [
+        "",
+    ];
+
+    let hsl = {
+        h: 0,
+        s: 0,
+        l: 0
+    };
+
+    var currentEffect = 1;
+    var previousEffect = 0;
+    var sequenceTimerVar = 0;
+    var sequenceTime = 0;
+    var music_timer = 0.0;
+    var colorSequenceTimerVar = 0;
+
+    // 0-90: Jellyfish fast
+    // 90-180: Glow pink
+    // 180-210: Glow fast rood
+    // 210-450: Strobe slow
+    // 450-510: Jellyfish slow
+
+    var sequenceDict = {};
+
+    sequenceDict[1] = 1;
+    sequenceDict[12] = 2;
+    sequenceDict[96] = 20;
+    sequenceDict[144] = 3;
+    // sequenceDict[230] = 4;
+    sequenceDict[240] = 4;
+    // sequenceDict[312] = 11;
+    sequenceDict[270] = 5;
+    sequenceDict[350] = 9;//Zwart
+    sequenceDict[361] = 6;
+    // sequenceDict[420] = 7;
+    sequenceDict[460] = 8;
+    sequenceDict[540] = 9;
+    sequenceDict[550] = 10;
+    sequenceDict[660] = 7;
+    sequenceDict[700] = 19;
+    sequenceDict[720] = 12;
+    sequenceDict[735] = 13;
+    sequenceDict[740] = 14;
+    sequenceDict[784] = 15;
+    sequenceDict[810] = 16;
+    sequenceDict[860] = 17;
+    sequenceDict[891] = 18;
+
+    var colorCounter = 1;
+    var colorSequenceDict = {};
+    var colorGoingUp = false;
+    var colorSequenceStartHue = 0.6277777777777778;
+    var colorSequenceEndHue = 0.9555555555555556;
+    // function setNextColor() {
+    //     hsl.h = colorSequenceDict[colorCounter];
+    //     paletteId = 1624449450971;
+    //     for (let i = 0; i < endpoints.length; i++) {
+    //         const ip = endpoints[i]
+    //         fetch(`${ip}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SolidColor"}`)
+    //     }
+    //
+    //     console.log("hsl.h:" + hsl.h);
+    //     colorCounter++;
+    //     if (colorCounter > 11) {
+    //         colorCounter = 1;
+    //     }
+    // }
+
+    function setNextColor() {
+        if (colorGoingUp) {
+            if (hsl.h < colorSequenceEndHue) {
+                hsl.h = hsl.h + 0.002777777777777778;
+            } else {
+                colorGoingUp = false;
+            }
+        } else {
+            if (hsl.h > colorSequenceStartHue) {
+                hsl.h = hsl.h - 0.002777777777777778;
+                if(hsl.h < 0){
+                    hsl.h = 0;
+                }
+            } else {
+                colorGoingUp = true;
+            }
+        }
+        // hsl.h = colorSequenceDict[colorCounter];
+        paletteId = 1624449450971;
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SolidColor"}`)
+        }
+
+        console.log("hsl.h:" + hsl.h);
+        colorCounter++;
+        if (colorCounter > 11) {
+            colorCounter = 1;
+        }
+    }
+
+    function setNextEffect() {
+        let sequenceTime = Math.floor(music_timer);
+
+        if (sequenceTime in sequenceDict) {
+            currentEffect = sequenceDict[sequenceTime];
+            console.log("currentEffect:" + currentEffect + "sequenceTime:" + sequenceTime);
+        }
+
+        if (currentEffect !== previousEffect) {
+            if (currentEffect === 1) {
+                // Start with black
+                enableFountain(true);
+                setBrightness(0)
+                enableFountainLED(false);
+
+                stopColorSequence();
+            } else if (currentEffect === 2) {
+                // Jelly Fish Slow
+                // Fontein aan
+                // Fontein Licht Fade uit.
+                enableFountain(true);
+                setJellyfishSlow(0.03, -2.75);
+                stopColorSequence();
+                // setFountain(1);
+            } else if (currentEffect === 3) {
+                // Jelliy Fish Fast
+                // Fontein aan
+                // Fontein Licht uit.
+                enableFountain(true);
+                setJellyfish(0.05, -2.0);
+                stopColorSequence();
+                console.log("setJellyfish(0.05, -2.0);")
+            } else if (currentEffect === 20) {
+                enableFountain(false);
+            }else if (currentEffect === 4) {
+                // Fading in - out  very slow. dark blue. 5 % speed.
+                // Fontein uit
+                // Fontein Licht uit.
+                // Brightness 0.1 speed 0.1
+                // h:0.6444444444444445
+                // s:1
+                // l:0.5
+                hsl.h = 0.77;
+                hsl.s = 1;
+                hsl.l = 0.5;
+                sendColor(0.05, 0.001);
+                enableFountain(false);
+                enableFountainLED(false);
+                stopColorSequence();
+            } else if (currentEffect === 5) {
+                // Fading in - out  very slow. purple. 6 % speed
+                // Fontein uit
+                // Fontein Licht uit.
+                hsl.h = 0.77;
+                hsl.s = 1;
+                hsl.l = 0.5;
+                startColorSequence(0.77, 0.6277777777777778, 0.9555555555555556);
+                sendColor(0.05, 0.001);
+                enableFountain(false);
+                enableFountainLED(false);
+            } else if (currentEffect === 6) {
+                // Fading in - out  very slow. roze. 7 % speed
+                // Fontein uit
+                // Fontein Licht uit.
+                hsl.h = 0.6;
+                hsl.s = 1;
+                hsl.l = 0.5;
+                sendColor(0.2);
+                setBrightness(0.001);
+                enableFountain(false);
+                enableFountainLED(false);
+                startColorSequence(0.6, 0.6277777777777778, 0.9555555555555556);
+            } else if (currentEffect === 8) {
+                // jelly fish slow
+                // Fontein uit
+                // Fontein Licht uit.
+                stopColorSequence();
+                setJellyfishSlow(0.07, -2.75);
+                enableFountain(false);
+                enableFountainLED(false);
+                stopColorSequence();
+            } else if (currentEffect === 9) {
+                // Licht uit
+                // Fontein uit
+                // Fontein Licht uit.
+
+                setBrightness(0)
+                enableFountain(false);
+                enableFountainLED(false);
+                stopColorSequence();
+            } else if (currentEffect === 10) {
+                // Licht uit
+                // Fontein uit
+                // Fontein Licht uit.
+
+                hsl.h = 0.92222222222222222222;
+                hsl.s = 1;
+                hsl.l = 1;
+                setStrobeColored(0.5, 0.1);
+                enableFountain(false);
+                enableFountainLED(false);
+                stopColorSequence();
+            } else if (currentEffect === 7) {
+                hsl.h = 0.92222222222222222222;
+                hsl.s = 1;
+                hsl.l = 1;
+                setStrobeColored(0.35, 0.1);
+                enableFountain(false);
+                enableFountainLED(false);
+                stopColorSequence();
+            }  else if (currentEffect === 19) {
+                hsl.h = 0.92222222222222222222;
+                hsl.s = 1;
+                hsl.l = 1;
+                setStrobeColored(0.25, 0.1);
+                enableFountain(false);
+                enableFountainLED(false);
+                stopColorSequence();
+            }else if (currentEffect === 11) {
+                // Jelliy Fish Fast
+                // Fontein uit
+                // Fontein Licht uit.
+                setJellyfish(0.05, -2.0);
+                enableFountain(false);
+                enableFountainLED(false);
+                stopColorSequence();
+            } else if (currentEffect === 12) {
+                // Fontein uit
+                // Fontein Licht uit.
+                setBrightness(0)
+                enableFountain(false);
+                enableFountainLED(false);
+                stopColorSequence();
+            } else if (currentEffect === 13) {
+                // Fontein aan
+                // Fontein Licht uit.
+                enableFountain(true);
+                enableFountainLED(false);
+                stopColorSequence();
+            } else if (currentEffect === 14) {
+                // Jelliy Fish Fast
+                // Fontein uit
+                // Fontein Licht uit.
+                enableFountain(true);
+                enableFountainLED(false);
+                setJellyfish(0.05, -2.0);
+                stopColorSequence();
+            } else if (currentEffect === 15) {
+                // Jelliy Fish Fast
+                // Fontein uit
+                // Fontein Licht uit.
+                hsl.h = 0.008333333333333333;
+                hsl.s = 1;
+                hsl.l = 0.5;
+                startColorSequence(0.008333333333333333, 0.008333333333333333, 0.10);
+                sendColor(0.0001, 0.001);
+                enableFountain(true);
+                enableFountainLED(false);
+            } else if (currentEffect === 16) {
+                // Jelliy Fish Fast
+                // Fontein uit
+                // Fontein Licht uit.
+                // hsl.h = 0.058333333333333334;
+                // hsl.s = 1;
+                // hsl.l = 0.5;
+                // sendColor(0.001);
+                // setBrightness(0.001);
+                // enableFountain(true);
+                // stopColorSequence();
+            } else if (currentEffect === 17) {
+                // static color
+                hsl.h = 0.058333333333333334;
+                hsl.s = 1;
+                hsl.l = 0.5;
+                setStaticColor()
+                stopColorSequence();
+                enableFountainLED(true);
+
+
+            } else if (currentEffect === 18) {
+                enableFountainLED(true);
+                stopColorSequence();
+                // static color
+
+            }
+            previousEffect = currentEffect;
+        }
+    }
+
+    var previousTimeSeconds = 0;
+
+    var audioplayerglobal = document.getElementById("myAudio");
+    audioplayerglobal.addEventListener("timeupdate", function () {
+        var currentTime = audioplayerglobal.currentTime;
+        var currentTimeSeconds = Math.floor(audioplayerglobal.currentTime);
+        var duration = audioplayerglobal.duration;
+        if (currentTimeSeconds !== previousTimeSeconds) {
+            previousTimeSeconds = currentTimeSeconds;
+            console.log("currentTimeSeconds:" + currentTimeSeconds + ", duration:" + duration);
+
+            music_timer = currentTime;
+            if (!audioplayerglobal.paused) {
+                setNextEffect();
+            }
+        }
+
+
+        // Check if song has ended
+        if (currentTime >= duration) {
+            // Run your code here
+            console.log("song ended");
+            stopDreamChapelSequence();
+        }
+
+    });
+
+    function showButton(id, show) {
+        if (show) {
+            document.getElementById(id).style.display = "revert";
+        } else {
+            document.getElementById(id).style.display = "none";
+        }
+    }
+
+    function startDreamChapelSequence() {
+        console.log("startDreamChapelSequence()");
+        var audioplayer1 = document.getElementById("myAudioDreamingLoop");
+        audioplayer1.pause()
+        var audioplayer2 = document.getElementById("myAudio");
+        audioplayer2.play()
+        enableFountainLED(false);
+
+        showButton("buttonStart", false);
+        showButton("buttonStop", true);
+    }
+
+    function stopDreamChapelSequence() {
+        console.log("stopDreamChapelSequence()");
+        var audioplayer1 = document.getElementById("myAudio");
+        audioplayer1.pause()
+        var audioplayer2 = document.getElementById("myAudioDreamingLoop");
+        audioplayer2.play()
+        setBrightness(0)
+        enableFountain(true);
+        enableFountainLED(true);
+        setJellyfish(0.05, -2.0);
+
+        audioplayer1.currentTime = 0;
+        previousEffect = 0;
+        // stopSequence()
+        showButton("buttonStart", true);
+        showButton("buttonStop", false);
+
+        // setBrightness(0)
+    }
+
+    function startColorSequence(h_initial, hue_start, hue_end) {
+        console.log("startColorSequence");
+        hsl.h = h_initial;
+        hsl.s = 1;
+        hsl.l = 0.5;
+        colorSequenceStartHue = hue_start;
+        colorSequenceEndHue = hue_end;
+        colorSequenceTimerVar = setInterval(setNextColor, 500);
+    }
+
+    function stopColorSequence() {
+        console.log("stopSequence, sequenceTimerVar" + colorSequenceTimerVar);
+
+        if (colorSequenceTimerVar != 0) {
+            clearInterval(colorSequenceTimerVar)
+        }
+    }
+
+
+    // if (sequenceTime > 90) {
+    //     // stopSequence();
+    //     setBrightness(0)
+    // }
+
+    //	if(currentEffect>2){
+    //		currentEffect=1;
+    //	}else{
+    //		currentEffect++;
+    //	}
+
+
+    function setStrobe(speed, brightness) {
+        console.log("setStrobe(speed=" + speed + ", brightness=" + brightness + ")");
+        // hsl.h = 0.6444444444444445;
+        // hsl.s = 1;
+        // hsl.l = 0.5;
+        setPattern(1624276202155);
+        // 1624290237337
+        // const paletteId = 1624449450971;
+        // setPalette(paletteId);
+        //
+        // for (let i = 0; i < endpoints.length; i++) {
+        //     const ip = endpoints[i]
+        //     fetch(`${ip}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SolidColor"}`)
+        //         .then((response) => {
+        //             setSpeed(speed)
+        //             setBrightness(brightness);
+        //             setScale(1.0);
+        //         })
+        // }
+        setBrightness(brightness);
+        setSpeed(speed);
+        setScale(1.0);
+    }
+
+    function setStrobeColored(speed, brightness) {
+        console.log("setStrobeColored(speed=" + speed + ", brightness=" + brightness + ")");
+        const paletteId = 1624449450971;
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"StrobeColored"}`)
+                .then((response) => {
+                    setSpeed(speed)
+                    setBrightness(brightness);
+                    setScale(1.0);
+                })
+        }
+        setPattern(1696875330311);
+
+
+    }
+
+    function sendColor(speed, brightness) {
+        console.log("sendColor(speed=" + speed + ", brightness=" + brightness + ")");
+        setPattern(1624446887029);
+        const paletteId = 1624449450971;
+        setPalette(paletteId);
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SlowPulsePalette"}`)
+                .then((response) => {
+                    setSpeed(speed)
+                    setBrightness(brightness);
+                    setScale(1.0);
+                })
+        }
+
+    }
+
+    function sendColor(speed) {
+        console.log("sendColor(speed=" + speed + ")");
+        sendColor(speed, 1.0);
+    }
+
+    function setStaticColor() {
+        console.log("setStaticColor()");
+        // setColor()
+        setPattern(0);
+        setBrightness(100);
+        setScale(1.0);
+        // resetTimer();
+    }
+
+    function setWaveCubic(speed) {
+        console.log("setWaveCubic(speed=" + speed + ")");
+        setPattern(1663007686041);
+        const paletteId = 1624449450971;
+        setPalette(paletteId);
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SlowPulsePalette"}`)
+                .then((response) => {
+                    setSpeed(speed)
+                    setBrightness(1.0);
+                    setScale(1.0);
+                })
+        }
+    }
+
+    function setWaveTriangle(speed) {
+        console.log("setWaveTriangle(speed=" + speed + ")");
+        setPattern(1663008226484);
+        const paletteId = 1624449450971;
+        setPalette(paletteId);
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SlowPulsePalette"}`)
+                .then((response) => {
+                    setSpeed(speed)
+                    setBrightness(1.0);
+                    setScale(1.0);
+                })
+        }
+    }
+
+    function setStrobe() {
+        console.log("setStrobe()");
+        setPattern(1624276202155);
+        setBrightness(1.0);
+        setSpeed(1.0);
+    }
+
+    // function setStrobe(speed, brightness) {
+    //     setPattern(1624276202155);
+    //     setBrightness(brightness);
+    //     setSpeed(speed);
+    //     setScale(1.0);
+    // }
+
+    function setJellyfishSlow(speed, scale) {
+        console.log("setJellyfishSlow(speed=" + speed + ", scale=" + scale + ")");
+        setPattern(1624277222887);
+        setPalette(1624275666284);
+        setBrightness(1.0);
+        setScale(scale);
+        setSpeed(speed);
+    }
+
+
+    function setJellyfish(speed, scale) {
+        console.log("setJellyfish(speed=" + speed + ", scale=" + scale + ")");
+        setPattern(1624277222886);
+        setPalette(1624275666283);
+        setBrightness(1.0);
+        setScale(scale);
+        setSpeed(speed);
+    }
+
+    function setWarning() {
+        console.log("setWarning()");
+        setPattern(1628856045832);
+        setBrightness(1.0);
+        setSpeed(0.27);
+        resetTimer();
+    }
+
+    function sync() {
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/resettimer`)
+        }
+    }
+
+    function sendColor() {
+        console.log("sendColor()");
+        setPattern(1624446887029);
+        const paletteId = 1624449450971;
+        setPalette(paletteId);
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SlowPulsePalette"}`)
+                .then((response) => {
+                    setSpeed(0.2)
+                    setBrightness(1.0);
+                })
+        }
+    }
+
+
+    function setPattern(value) {
+        console.log("setPattern(" + value + ")");
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/setparam?key=primary_pattern&value=${value}`)
+        }
+    }
+
+    function setPalette(value) {
+        console.log("setPalette(" + value + ")");
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/setparam?key=palette&value=${value}`)
+        }
+    }
+
+    function setBrightness(value) {
+        console.log("setBrightness(" + value + ")");
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/setparam?key=brightness&value=${value}`)
+        }
+    }
+
+    function setSpeed(value) {
+        console.log("setSpeed(" + value + ")");
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/setparam?key=primary_speed&value=${value}`)
+        }
+    }
+
+    function setScale(value) {
+        console.log("setScale(" + value + ")");
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/setparam?key=primary_scale&value=${value}`)
+
+        }
+    }
+
+    function enableFountainLED(enable) {
+        console.log("enableFountainLED(" + enable + ")");
+        if (enable) {
+            setFountainArduino(5);
+        } else {
+            setFountainArduino(6);
+        }
+    }
+
+    function enableFountain(enable) {
+        console.log("enableFountain(" + enable + ")");
+        if (enable) {
+            setFountainArduino(1);
+        } else {
+            setFountainArduino(2);
+        }
+    }
+
+    function setFountainArduino(value) {
+        console.log("setFountainArduino(" + value + ")")
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/set-fountain?key=fountain&value=${value}`)
+        }
+    }
+
+</script>
+</body>
+</html>

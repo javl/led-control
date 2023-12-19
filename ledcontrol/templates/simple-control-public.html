@@ -1,273 +1,381 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LED Control</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LED Control</title>
 
-  <link rel="apple-touch-icon" sizes="152x152" href="static/apple-touch-icon.png?v=1">
-  <link rel="icon" type="image/png" sizes="32x32" href="static/favicon-32x32.png?v=1">
-  <link rel="icon" type="image/png" sizes="16x16" href="static/favicon-16x16.png?v=1">
-  <link rel="manifest" href="static/site.webmanifest?v=1">
-  <link rel="mask-icon" href="static/safari-pinned-tab.svg?v=1" color="#5bbad5">
-  <link rel="shortcut icon" href="static/favicon.ico?v=1">
-  <meta name="msapplication-TileColor" content="#da532c">
-  <meta name="theme-color" content="#ffffff">
+    <link rel="apple-touch-icon" sizes="152x152" href="static/apple-touch-icon.png?v=1">
+    <link rel="icon" type="image/png" sizes="32x32" href="static/favicon-32x32.png?v=1">
+    <link rel="icon" type="image/png" sizes="16x16" href="static/favicon-16x16.png?v=1">
+    <link rel="manifest" href="static/site.webmanifest?v=1">
+    <link rel="mask-icon" href="static/safari-pinned-tab.svg?v=1" color="#5bbad5">
+    <link rel="shortcut icon" href="static/favicon.ico?v=1">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
 
-  <link href="static/font-awesome-6-main/css/all.min.css" rel="stylesheet" />
-  <style type="text/css">
-   html,
-   body {
-     width: 100%;
-     padding: 0;
-     margin: 0;
-     text-align: center;
-     background-color: black;
-     font-family: Verdana, Geneva, Tahoma, sans-serif;
-    }
+    <link href="static/font-awesome-6-main/css/all.min.css" rel="stylesheet"/>
+    <style type="text/css">
+        html,
+        body {
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+            background-color: black;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
 
-    button {
-      width: 40%;
-      border: 10px solid red;
-      /* display: inline; */
-      display: inline-block;
-      padding: 0.5rem;
-      font-size: 1.5rem;
-      background-color: white;
-      border: none;
-      border-radius: 4px;
-      border: 1px solid #ffffff;
-    }
+        button {
+            width: 40%;
+            border: 10px solid red;
+            /* display: inline; */
+            display: inline-block;
+            padding: 0.5rem;
+            font-size: 1.5rem;
+            background-color: white;
+            border: none;
+            border-radius: 4px;
+            border: 1px solid #ffffff;
+        }
 
-    #color-picker {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 1rem;
-    }
+        #color-picker {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
 
-    .button-container {
-      margin-bottom: 1rem;
-    }
+        .button-container {
+            margin-bottom: 1rem;
+        }
 
-    .button-container button {
-      width: 40%;
-      display: inline-block;
-    }
+        .button-container button {
+            width: 40%;
+            display: inline-block;
+        }
 
-    .maintenance-buttons {
-      margin-top: 500px;
-    }
+        .maintenance-buttons {
+            margin-top: 500px;
+        }
 
-    .maintenance-btn {
-      margin-top: 1rem;
-      width: auto;
-    }
+        .maintenance-btn {
+            margin-top: 1rem;
+            width: auto;
+        }
 
-    .update-msg {
-      width: 100%;
-      height: 100%;
-      background-color: black;
-      color: white;
-      position: absolute;
-      left: 0;
-      top: 0;
-      display: none;
-      text-align: center;
-      font-size: 2rem;
-      padding-top: 200px;
-    }
+        .update-msg {
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            color: white;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: none;
+            text-align: center;
+            font-size: 2rem;
+            padding-top: 200px;
+        }
 
-    .connected-msg {
-      margin-top: 1rem;
-      color: white;
-    }
+        .slidecontainer {
+            width: 100%; /* Width of the outside container */
+        }
 
-    h1 {
-      color: white;
-      font-size: 2rem;
-      margin-top: .8rem;
-    }
+        .slider {
+            width: 80%; /* Full-width */
+            height: 25px; /* Specified height */
+        }
 
-    h2 {
-      color: white;
-      font-size: 1rem;
-      margin-top: .9rem;
-    }
+        .connected-msg {
+            margin-top: 1rem;
+            color: white;
+        }
 
-  </style>
+        h1 {
+            color: white;
+            font-size: 2rem;
+            margin-top: .8rem;
+        }
+
+        h2 {
+            color: white;
+            font-size: 1rem;
+            margin-top: .9rem;
+        }
+
+    </style>
 </head>
 <body>
-  <div class="update-msg">
+<div class="update-msg">
     <div class="msg">
-      Looking for updates<br>and rebooting...
+        Looking for updates<br>and rebooting...
     </div>
-  </div>
-  <div class="button-container">
+</div>
+<div class="button-container">
+    <!--    Jelly Fish-->
     <div>
-      <div>
-        <h1><i class="fa-solid fa-spaghetti-monster-flying"></i> Jellyfish</h1>
-        <button onclick="setJellyfishSlow(0.07, -2.75)">slow</button>
-        <button onclick="setJellyfish(0.1, -2.0)">fast</button>
-      </div>
+        <div>
+            <h1><i class="fa-solid fa-spaghetti-monster-flying"></i> Jellyfish</h1>
+            <button onclick="setJellyfishSlow(0.07, -2.75)">slow</button>
+            <button onclick="setJellyfish(0.1, -2.0)">fast</button>
+        </div>
     </div>
 
+    <!--    Glow-->
     <div>
-      <h1><i class="fas fa-adjust"></i> Glow</h1>
-      <button class="glow-color-preview" onclick="sendColor(0.2)">Slow</button>
-      <button class="glow-color-preview" onclick="sendColor(0.4)">Fast</button>
+        <h1><i class="fas fa-adjust"></i> Glow</h1>
+        <button class="glow-color-preview" onclick="sendColor(0.2)">Sine</button>
+        <button class="glow-color-preview" onclick="setWaveTriangle(0.2)">Triangle</button>
     </div>
 
+    <!--    Strobe-->
     <div>
-      <h1><i class="fas fa-bahai"></i> Strobe</h1>
-      <button onclick="setStrobe(1.0, 0.4)">Slow</button>
-      <button onclick="setStrobe(1.5, 1.0)">Fast</button>
+        <h1><i class="fas fa-bahai"></i> Strobe</h1>
+        <button onclick="setStrobe(1.0, 0.4)">Slow</button>
+        <button onclick="setStrobe(1.5, 1.0)">Fast</button>
     </div>
 
-    <h2>Glow color</h2>
-  </div>
+    <!--    Static color and Off-->
+    <div>
+        <h1><i class="fas fa-bahai"></i> Color</h1>
+        <button onclick="setStaticColor()">Static color</button>
+        <button onclick="setLEDsOff()">LEDs off</button>
+    </div>
+</div>
 
-  <div id="color-picker"></div>
+<!--Color Picker-->
+<div id="color-picker"></div>
 
-  <script src="static/js/iro.min.js"></script>
+<!--Brightness Slider-->
+<div class="slidecontainer">
+    <h1><i class="msg" id="mySliderOutputBrightness">Brightness: 0.40</i></h1>
+    <input type="range" min="1" max="100" value="2" class="slider" id="mySliderBrightness">
+    <!--    <h1><i class="msg" id="mySliderOutputBrightness">0.40</i> </h1>-->
+</div>
 
-  <script>
-  const endpoints = [
-    'http://192.168.1.201',
-    'http://192.168.1.202',
-    'http://192.168.1.203',
-    'http://192.168.1.204',
-    'http://192.168.1.205',
-    'http://192.168.1.206',
-    'http://192.168.1.207',
-    'http://192.168.1.208',
-  ];
-  // let connected = false;
-  // function checkIfOnline() {
-  //   fetch(`${endpoint}/ping`)
-  //   .then((response) => {
-  //     if (response.status === 200) {
-  //       connected = true;
-  //       document.querySelector('.connected-msg').innerHTML = 'connected';
-  //     } else {
-  //       connected = false;
-  //       document.querySelector('.connected-msg').innerHTML = 'disconnected';
-  //     }
-  //   })
-  //   .catch((error) => {
-  //     connected = false;
-  //     document.querySelector('.connected-msg').innerHTML = 'disconnected';
-  //   });
-  // }
-  // setInterval(() => {
-  //   checkIfOnline();
-  // }, 5000);
-  // checkIfOnline();
+<!--Speed Slider-->
+<div class="slidecontainer">
+    <h1><i class="msg" id="mySpeedSliderOutput">Speed: 0.20</i></h1>
+    <input type="range" min="1" max="150" value="2" class="slider" id="mySpeedSlider">
+</div>
 
-  let hsl = {
-    h: 0,
-    s: 0,
-    l: 0
-  };
+<script src="static/js/iro.min.js"></script>
 
-  const colorPicker = new iro.ColorPicker("#color-picker", {
-    width: 200,
-    color: "#f00"
-  });
+<script>
+    const endpoints = [
+        'http://192.168.1.201',
+        'http://192.168.1.202',
+        'http://192.168.1.203',
+        'http://192.168.1.204',
+        'http://192.168.1.205',
+        'http://192.168.1.206',
+        'http://192.168.1.207',
+        'http://192.168.1.208',
+    ];
+    // let connected = false;
+    // function checkIfOnline() {
+    //   fetch(`${endpoint}/ping`)
+    //   .then((response) => {
+    //     if (response.status === 200) {
+    //       connected = true;
+    //       document.querySelector('.connected-msg').innerHTML = 'connected';
+    //     } else {
+    //       connected = false;
+    //       document.querySelector('.connected-msg').innerHTML = 'disconnected';
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     connected = false;
+    //     document.querySelector('.connected-msg').innerHTML = 'disconnected';
+    //   });
+    // }
+    // setInterval(() => {
+    //   checkIfOnline();
+    // }, 5000);
+    // checkIfOnline();
 
-  colorPicker.on('color:change', function(color) {
-    hsl.h = color.hsl.h / 360.0;
-    hsl.s = color.hsl.s /100.0;
-    hsl.l = color.hsl.l /100.0;
-    document.querySelectorAll('.glow-color-preview').forEach(el => {
-        el.style.backgroundColor = color.rgbaString;
+    let hsl = {
+        h: 0,
+        s: 0,
+        l: 0
+    };
+
+
+    const colorPicker = new iro.ColorPicker("#color-picker", {
+        width: 200,
+        color: "#f00"
     });
-  });
 
-  function setStrobe(speed, brightness){
-    setPattern(1624276202155);
-    setBrightness(brightness);
-    setSpeed(speed);
-    setScale(1.0);
-    resetTimer();
-  }
+    colorPicker.on('color:change', function (color) {
+        hsl.h = color.hsl.h / 360.0;
+        hsl.s = color.hsl.s / 100.0;
+        hsl.l = color.hsl.l / 100.0;
 
-  function setJellyfishSlow(speed, scale){
-    setPattern(1624277222887);
-    setPalette(1624275666284);
-    setBrightness(1.0);
-    setScale(scale);
-    setSpeed(speed);
-    resetTimer();
-  }
+        console.log("h:" + hsl.h);
+        console.log("s:" + hsl.s);
+        console.log("l:" + hsl.l);
+        document.querySelectorAll('.glow-color-preview').forEach(el => {
+            el.style.backgroundColor = color.rgbaString;
+        });
+        setColor()
+    });
 
-  function setJellyfish(speed, scale){
-    setPattern(1624277222886);
-    setPalette(1624275666283);
-    setBrightness(1.0);
-    setScale(scale);
-    setSpeed(speed);
-    resetTimer();
-  }
+    colorPicker.on('opacity:change', function (color) {
+        opacity = color.opacity
+        console.log("opacity: " + opacity);
 
-  function setWarning(){
-    setPattern(1628856045832);
-    setBrightness(1.0);
-    setSpeed(0.27);
-    setScale(1.0);
-    resetTimer();
-  }
+    });
 
-  function sendColor(speed) {
-    setPattern(1624446887029);
-    const paletteId = 1624449450971;
-    setPalette(paletteId);
-    for (let i=0; i<endpoints.length;i++) {
-      const ip = endpoints[i]
-      fetch(`${ip}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SlowPulsePalette"}`)
-      .then((response) => {
-        setSpeed(speed)
-        setBrightness(1.0);
+    // Sliders:
+    var slider = document.getElementById("mySpeedSlider");
+    var output = document.getElementById("mySpeedSliderOutput");
+    output.innerHTML = "Speed: " + slider.value / 100; // Display the default slider value
+    slider.oninput = function () {
+        output.innerHTML = "Speed: " + this.value / 100;
+    }
+    slider.onchange = function () {
+        setSpeed(slider.value / 100);
+    }
+
+    var sliderBrightness = document.getElementById("mySliderBrightness");
+    var outputBrightness = document.getElementById("mySliderOutputBrightness");
+    outputBrightness.innerHTML = "Brightness: " + slider.value / 100; // Display the default slider value
+    sliderBrightness.oninput = function () {
+        outputBrightness.innerHTML = "Brightness: " + this.value / 100;
+    }
+    sliderBrightness.onchange = function () {
+        setBrightness(sliderBrightness.value / 100);
+    }
+
+
+    function setLEDsOff() {
+        setPattern(0);
+        setBrightness(0);
         setScale(1.0);
-      })
+        // resetTimer();
     }
-  }
 
-  function setPattern(value) {
-    for (let i=0; i<endpoints.length;i++) {
-      const ip = endpoints[i]
-      fetch(`${ip}/setparam?key=primary_pattern&value=${value}`)
+
+    function setStaticColor() {
+        setColor()
+        setPattern(0);
+        setBrightness(sliderBrightness.value / 100);
+        setScale(1.0);
+        // resetTimer();
     }
-  }
 
-  function setPalette(value) {
-    for (let i=0; i<endpoints.length;i++) {
-      const ip = endpoints[i]
-      fetch(`${ip}/setparam?key=palette&value=${value}`)
+    function setStrobe(speed, brightness) {
+        setPattern(1624276202155);
+        setBrightness(sliderBrightness.value / 100);
+        setSpeed(slider.value / 100);
+        setScale(1.0);
+        // resetTimer();
     }
-  }
 
-  function setBrightness(value) {
-    for (let i=0; i<endpoints.length;i++) {
-      const ip = endpoints[i]
-      fetch(`${ip}/setparam?key=brightness&value=${value}`)
-     }
-  }
-
-  function setSpeed(value) {
-    for (let i=0; i<endpoints.length;i++) {
-      const ip = endpoints[i]
-      fetch(`${ip}/setparam?key=primary_speed&value=${value}`)
+    function setJellyfishSlow(speed, scale) {
+        setPattern(1624277222887);
+        setPalette(1624275666284);
+        setBrightness(1.0);
+        setScale(scale);
+        setSpeed(speed);
+        // resetTimer();
     }
- }
 
- function setScale(value) {
-    for (let i=0; i<endpoints.length;i++) {
-      const ip = endpoints[i]
-      fetch(`${ip}/setparam?key=primary_scale&value=${value}`)
+    function setJellyfish(speed, scale) {
+        setPattern(1624277222886);
+        setPalette(1624275666283);
+        setBrightness(1.0);
+        setScale(scale);
+        setSpeed(speed);
+        // resetTimer();
     }
- }
 
-  </script>
+    function setWarning() {
+        setPattern(1628856045832);
+        setBrightness(1.0);
+        setSpeed(0.27);
+        setScale(1.0);
+        // resetTimer();
+    }
+
+
+    function setWaveTriangle(speed) {
+        setPattern(1663008226484);
+        const paletteId = 1624449450971;
+        setPalette(paletteId);
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SlowPulsePalette"}`)
+                .then((response) => {
+                    setSpeed(speed)
+                    setBrightness(1.0);
+                    setScale(1.0);
+                })
+        }
+    }
+
+    function sendColor(speed) {
+        setPattern(1624446887029);
+        const paletteId = 1624449450971;
+        setPalette(paletteId);
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SlowPulsePalette"}`)
+                .then((response) => {
+                    setSpeed(slider.value / 100)
+                    setBrightness(sliderBrightness.value / 100);
+                    setScale(1.0);
+                })
+        }
+    }
+
+    function setColor() {
+        const paletteId = 1624449450971;
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/setpalette?key=${paletteId}&value={"colors":[[${hsl.h},${hsl.s},${hsl.l}],[${hsl.h},${hsl.s},${hsl.l}]],"mode":0,"name":"SlowPulsePalette"}`)
+                .then((response) => {
+
+                })
+        }
+    }
+
+    function setPattern(value) {
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/setparam?key=primary_pattern&value=${value}`)
+        }
+    }
+
+    function setPalette(value) {
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/setparam?key=palette&value=${value}`)
+        }
+    }
+
+    function setBrightness(value) {
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/setparam?key=brightness&value=${value}`)
+        }
+    }
+
+    function setSpeed(value) {
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/setparam?key=primary_speed&value=${value}`)
+        }
+    }
+
+    function setScale(value) {
+        for (let i = 0; i < endpoints.length; i++) {
+            const ip = endpoints[i]
+            fetch(`${ip}/setparam?key=primary_scale&value=${value}`)
+        }
+    }
+
+</script>
 </body>
 </html>

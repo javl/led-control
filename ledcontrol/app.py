@@ -16,6 +16,14 @@ import ledcontrol.animationpatterns as animpatterns
 import ledcontrol.colorpalettes as colorpalettes
 import ledcontrol.utils as utils
 import os
+
+import ledcontrol.chapel_serial as chapel_serial
+
+import logging
+
+logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', level=logging.INFO)
+logger = logging.getLogger()
+
 # Data class for form items
 @dataclass
 class FormItem:
@@ -156,6 +164,38 @@ def create_app(led_count,
         return render_template('simple-control-bambi.html',
                                form=form)
 
+    @app.route('/dream-chapel')
+    def get_control_helmond():
+        'Returns a simpler HTML controller page'
+        for item in form:
+            if (item.key in controller.params):
+                item.val = item.type(controller.params[item.key])
+
+        ports = chapel_serial.list_ports()
+        for port, desc, hwid in sorted(ports):
+            logger.info("{}: {} [{}]".format(port, desc, hwid))
+            if port == '/dev/ttyACM0':
+                chapel_serial.connect_serial(port)
+            elif port == '/dev/ttyACM1':
+                chapel_serial.connect_serial(port)
+
+        return render_template('simple-control-dream-chapel.html',
+                               form=form)
+
+    @app.route('/set-fountain')
+    def set_fountain():
+        'Control the fountains'
+        logger.info("/set-fountain")
+        key = request.args.get('key', type=int)
+        value = json.loads(request.args.get('value', type=str))
+        logger.info(f"key: {key}, value: {value}")
+        # Create packet
+        packet = bytearray()
+        packet.append(ord(f"{value}"[0]))
+
+        chapel_serial.serial_send_command(packet)
+        return jsonify(result='')
+
     @app.route('/ping')
     def get_ping():
         'Simple check to see if server is online'
@@ -187,6 +227,7 @@ def create_app(led_count,
         'Sets a key/value pair in controller parameters'
         key = request.args.get('key', type=str)
         value = request.args.get('value')
+        logger.info(f"/setparam key: {key}, value: {value}")
         form_item = next(filter(lambda i: i.key == key, form))
         if key == 'primary_pattern':
             save_current_pattern_params()

@@ -110,3 +110,4 @@ notes2.md
 restrictedtest.py
 *.scssc
 testmapping.json
+/.idea/

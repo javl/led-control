@@ -25,6 +25,7 @@ requirements = [
     'Flask-Cors>=3.0.10',
     'RestrictedPython>=4.0',
     'sacn>=1.8.1',
+    'pyserial~=3.5',
 ]
 
 setup(
